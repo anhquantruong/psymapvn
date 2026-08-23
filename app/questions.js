@@ -128,11 +128,12 @@ const LOCATIONS_API = 'https://provinces.open-api.vn/api/v2/?depth=2';
       hint:{vi:'Không bắt buộc trả lời.', en:'Optional.'},
       options:[
         {vi:'Hỗ trợ LGBTQ+', en:'LGBTQ+ support'},
-        {vi:'Hỗ trợ người bệnh H.', en:'Support for people living with HIV'},
+        {vi:'Hỗ trợ người bệnh H', en:'Support for people living with H'},
         {vi:'Hỗ trợ Nhân viên Y Tế', en:'Support for healthcare workers'},
         {vi:'Hỗ trợ nạn nhân nạn buôn bán người', en:'Support for survivors of human trafficking'},
         {vi:'Hỗ trợ nạn nhân bạo lực học đường / bạo lực gia đình', en:'Support for survivors of school or domestic violence'},
         {vi:'Hỗ trợ người mắc bệnh mạn tính', en:'Support for people with chronic illness'},
+        {vi:'Hỗ trợ trẻ em', en:'Children support'},
       ]},
     { key:'done', type:'done' },
   ];
