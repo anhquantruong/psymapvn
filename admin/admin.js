@@ -1,19 +1,3 @@
-// =========================================================
-// MAPPINGSITEVN ADMIN
-// SQLite CRUD
-// =========================================================
-
-
-// =========================================================
-// AUTH GUARD
-// Kiểm tra session ngay khi trang tải — nếu hết hạn (ví dụ
-// tab để mở quá 8 tiếng) thì đá về trang đăng nhập. Đây là
-// lớp bảo vệ phụ; lớp chính đã chặn ở server (server.js sẽ
-// redirect trước khi index.html được trả về nếu chưa đăng
-// nhập, nên đoạn này chủ yếu xử lý trường hợp phiên hết hạn
-// giữa chừng trong lúc trang vẫn đang mở).
-// =========================================================
-
 async function guardAdminSession() {
 
   try {
@@ -1501,12 +1485,6 @@ function editClinic(id) {
   editingClinicId =
     Number(id);
 
-
-  // Fill every simple text/select/textarea field. Checkbox
-  // ("service") và các ô riêng ("price_from"/"price_to") KHÔNG
-  // được set theo cách này — set .value trên 1 checkbox sẽ ghi
-  // đè "value" attribute của chính nó (là nhãn dịch vụ, vd "Lo
-  // âu") thay vì cột "service" gộp, phá luôn checkbox đó.
   const fields =
     clinicForm.querySelectorAll(
       "[name]"
@@ -1948,9 +1926,7 @@ function formatFeedbackDate(value) {
 // =========================================================
 
 function isFeedbackRead(item) {
-
-  return Number(item.is_read) === 1;
-
+  return item.is_read === true;
 }
 
 
