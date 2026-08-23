@@ -9,7 +9,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>MappingSiteVN — Admin</title>
+  <title>PsyMapVN — Admin</title>
 
   <link rel="stylesheet" href="admin.css">
 </head>
@@ -20,7 +20,7 @@
   <aside class="admin-sidebar">
 
     <div class="admin-brand">
-      <h1>MappingSiteVN</h1>
+      <h1>PsyMapVN</h1>
       <span>ADMIN</span>
     </div>
 
@@ -67,23 +67,14 @@
 
 
   <main class="admin-main">
-
-
-    <!-- =================================================
-         DASHBOARD
-         ================================================= -->
-
-    <section
-      class="admin-page active"
-      id="dashboard"
-    >
+    <section class="admin-page active" id="dashboard">
 
       <header class="page-header">
 
         <div>
 
           <span class="eyebrow">
-            MAPPINGSITEVN
+            PsyMapVN
           </span>
 
           <h2>
@@ -166,12 +157,6 @@
       </div>
 
     </section>
-
-
-    <!-- =================================================
-         CLINICS
-         ================================================= -->
-
     <section
       class="admin-page"
       id="clinics"
@@ -204,17 +189,12 @@
         </button>
 
       </header>
-
-
-      <!-- SEARCH -->
-
       <div class="clinic-toolbar">
-
-  <input
-    id="clinicSearch"
-    type="search"
-    placeholder="Tìm kiếm cơ sở phòng khám...."
-  >
+        <input
+          id="clinicSearch"
+          type="search"
+          placeholder="Tìm kiếm cơ sở phòng khám...."
+        >
 
   <select id="clinicTypeFilter">
     <option value="all">
@@ -235,11 +215,7 @@
   </select>
 
 </div>
-
-
-      <!-- TABLE -->
-
-      <div class="clinic-table-wrapper">
+  <div class="clinic-table-wrapper">
 
         <table>
 
@@ -279,12 +255,6 @@
       </div>
 
     </section>
-
-
-    <!-- =================================================
-         FEEDBACK
-         ================================================= -->
-
     <section
       class="admin-page"
       id="feedback"
@@ -306,10 +276,6 @@
         </p>
 
       </header>
-
-
-      <!-- SEARCH / FILTER -->
-
       <div class="clinic-toolbar feedback-toolbar">
 
         <input
@@ -337,11 +303,6 @@
         </select>
 
       </div>
-
-
-      <!-- TABLE (KHÔNG hiện nội dung feedback ở đây —
-           phải bấm "Xem" mới thấy nội dung) -->
-
       <div class="clinic-table-wrapper">
 
         <table>
@@ -384,12 +345,6 @@
     </section>
 
   </main>
-
-
-  <!-- =====================================================
-       ADD CLINIC MODAL
-       ===================================================== -->
-
   <div
     class="modal hidden"
     id="clinicModal"
@@ -426,10 +381,6 @@
 
 
       <form id="clinicForm">
-
-
-        <!-- BASIC -->
-
         <div class="form-section">
 
           <h3>
@@ -495,10 +446,6 @@
           </label>
 
         </div>
-
-
-        <!-- LOCATION -->
-
         <div class="form-section">
 
           <h3>
@@ -609,10 +556,6 @@
           </div>
 
         </div>
-
-
-        <!-- CONTACT -->
-
         <div class="form-section">
 
           <h3>
@@ -650,10 +593,6 @@
           </div>
 
         </div>
-
-
-        <!-- SERVICE INFO (freeform, cột cũ) -->
-
         <div class="form-section">
 
           <h3>
@@ -699,12 +638,6 @@
           </label>
 
         </div>
-
-
-        <!-- =====================================================
-             PRICE RANGE (cột "price" — dạng A-B VNĐ)
-             ===================================================== -->
-
         <div class="form-section">
 
           <h3>
@@ -752,12 +685,6 @@
           </div>
 
         </div>
-
-
-        <!-- =====================================================
-             SERVICES OFFERED (cột "service" — multi-select)
-             ===================================================== -->
-
         <div class="form-section">
 
           <h3>
@@ -865,10 +792,6 @@
           </div>
 
         </div>
-
-
-        <!-- LICENSE -->
-
         <div class="form-section">
 
           <h3>
@@ -931,17 +854,6 @@
     </div>
 
   </div>
-
-
-  <!-- =====================================================
-       FEEDBACK DETAIL MODAL
-       Box trái: nội dung người dùng gửi (tên, email, chủ đề,
-       nội dung). Box phải: nơi admin soạn trả lời — bấm Gửi
-       sẽ lưu vào DB + tự chuyển status sang "Đã xử lý".
-       (Gửi mail thật sẽ được kết nối sau, hiện tại chỉ lưu
-       nội bộ.)
-       ===================================================== -->
-
   <div
     class="modal hidden"
     id="feedbackDetailModal"
@@ -978,10 +890,6 @@
 
 
       <div class="feedback-detail-grid">
-
-
-        <!-- BOX TRÁI: NỘI DUNG NGƯỜI GỬI -->
-
         <div class="feedback-detail-box">
 
           <h3>
@@ -1017,10 +925,6 @@
           <div class="feedback-message-box" id="fbDetailMessage"></div>
 
         </div>
-
-
-        <!-- BOX PHẢI: TRẢ LỜI -->
-
         <div class="feedback-detail-box">
 
           <h3>
@@ -1056,20 +960,11 @@
             >
               Gửi & Đánh dấu hoàn thành
             </button>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
-
   </div>
-
-
   <script src="admin.js"></script>
-
 </body>
-
 </html>
