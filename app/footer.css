@@ -1,18 +1,17 @@
 .site-footer {
-position: relative;
-background: #ffffff;
-color: #000000;
+  position: relative;
+  background: #ffffff;
+  color: #000000;
 }
 
 .footer-partners {
-position: absolute;
-top: 40px;
-left: 80px;
-
-display: flex;
-align-items: center;
-gap: 14px;
-flex-wrap: wrap;
+  position: absolute;
+  top: 40px;
+  left: 80px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .footer-partners img {

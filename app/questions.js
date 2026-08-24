@@ -47,7 +47,7 @@ const LOCATIONS_API = 'https://provinces.open-api.vn/api/v2/?depth=2';
         {vi:'Cho người thân', en:'For a loved one'},
       ]},
 
-    { key:'q1a', type:'text', required:true,
+    { key:'q1a', type:'single', required:true,
       showIf:a => a.q1 === 1,
       q:{vi:'Mối quan hệ của bạn và người cần tham vấn là gì?', en:"What is your relationship to the person who needs counseling?"},
       options:[
@@ -58,20 +58,16 @@ const LOCATIONS_API = 'https://provinces.open-api.vn/api/v2/?depth=2';
         {vi:'Người thân', en:'Relatives'},
         {vi:'Others', en:'Others'},
       ]},
+      
+    { key:'q2', type:'text', required:true, inputType:'number',
+        q:{vi:'Người cần tham vấn đang ở độ tuổi nào?', en:'What age group is the person who needs counseling in?'},
+        hint: {vi: 'Nhập tuổi người cần tham vấn.', en: "Please enter the age of the person who needs counseling service."},
+        placeholder: {vi:'Ví dụ: 25', en:'e.g. 25'},
+      },
 
-    { key:'q2', type:'single', required:true,
-      q:{vi:'Người cần tham vấn đang ở độ tuổi nào?', en:'What age group is the person who needs counseling in?'},
-      options:[
-        {vi:'Dưới 12 tuổi', en:'Under 12'},
-        {vi:'12–17 tuổi', en:'12–17'},
-        {vi:'18–25 tuổi', en:'18–25'},
-        {vi:'26–40 tuổi', en:'26–40'},
-        {vi:'41–60 tuổi', en:'41–60'},
-        {vi:'Trên 60 tuổi', en:'Over 60'},
-      ]},
     { key:'q3', type:'single', required: false,
       q:{vi:'Giới tính của người cần tham vấn là gì?', en:'What is the gender of the person who needs counseling?'},
-      
+      hint:{vi:'Không bắt buộc trả lời.', en:'Optional. You can skip this question!'},
       options:[
         {vi:'Nam', en:'Male'},
         {vi:'Nữ', en:'Female'},
@@ -79,6 +75,7 @@ const LOCATIONS_API = 'https://provinces.open-api.vn/api/v2/?depth=2';
         {vi:'Khác', en:'Other'},
         {vi:'Không muốn tiết lộ', en:'Prefer not to say'},
       ]},
+
     { key:'q4', type:'cascade', required:true,
       q:{vi:'Bạn đang sinh sống tại địa phương nào?', en:'Where do you currently live now?'},
       hint:{vi:'Chọn Tỉnh/Thành trước, sau đó chọn Phường.', en:'Select a Province/City first, then a Ward.'}},

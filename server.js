@@ -8,23 +8,6 @@ const bcrypt = require("bcryptjs");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-
-// =========================================================
-// REQUIRED ENV VARS
-// =========================================================
-//
-// SESSION_SECRET        random long string (see .env.example)
-// ADMIN_USERNAME         plain text username, e.g. "admin"
-// ADMIN_PASSWORD_HASH    bcrypt hash of the real password
-// DATABASE_URL           postgres connection string, ví dụ:
-//                         postgres://user:pass@host:5432/dbname
-//                         (Supabase/Railway/Neon/RDS đều cung cấp sẵn)
-//
-// None of these ever get sent to the browser — they only ever
-// live in the server process.
-// =========================================================
-
 const {
   SESSION_SECRET,
   ADMIN_USERNAME,
@@ -41,16 +24,7 @@ if (!SESSION_SECRET || !ADMIN_USERNAME || !ADMIN_PASSWORD_HASH || !DATABASE_URL)
   process.exit(1);
 
 }
-
-
-// =========================================================
-// MIDDLEWARE
-// =========================================================
-
 app.use(express.json());
-
-// Cần thiết nếu deploy sau reverse proxy (Render, Railway, Nginx...)
-// để cookie "secure" hoạt động đúng qua HTTPS.
 app.set("trust proxy", 1);
 
 app.use(

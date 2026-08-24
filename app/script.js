@@ -126,11 +126,12 @@ const body = document.body;
     }, speed);
   }
 
-  function setLang(lang){
+    function setLang(lang){
     body.setAttribute('data-lang', lang);
     viBtn.classList.toggle('active', lang === 'vi');
     enBtn.classList.toggle('active', lang === 'en');
     if(!pageHome.classList.contains('hidden')) typeHeroTitle(lang);
+    if(!pageDirectory.classList.contains('hidden')) refreshDirectoryUI();
   }
   viBtn.addEventListener('click', () => setLang('vi'));
   enBtn.addEventListener('click', () => setLang('en'));
@@ -144,6 +145,15 @@ const body = document.body;
   const pageAbout = document.getElementById('pageAbout');
   const pageHelp = document.getElementById('pageHelp');
   const pagePractice = document.getElementById('pagePractice');
+  const navDirectory = document.getElementById('navDirectory');
+  const pageDirectory = document.getElementById('pageDirectory');
+  const footerDirectory = document.getElementById('footerDirectory');
+  if (footerDirectory) {
+    footerDirectory.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPage('directory');
+    });
+  }
   const footerAbout = document.getElementById('footerAbout');
       footerAbout.addEventListener('click', (e) => {
       e.preventDefault();
@@ -192,14 +202,20 @@ function showPage(page) {
   pageAbout.classList.toggle('hidden', page !== 'about');
   pageHelp.classList.toggle('hidden', page !== 'help');
   pagePractice.classList.toggle('hidden', page !== 'practice');
+  pageDirectory.classList.toggle('hidden', page !== 'directory');
   navHome.classList.remove('active');
   navAbout.classList.remove('active');
   navHelp.classList.remove('active');
   navPractice.classList.remove('active');
+  navDirectory.classList.remove('active');
   if (page === 'home') navHome.classList.add('active');
   if (page === 'about') navAbout.classList.add('active');
   if (page === 'help') navHelp.classList.add('active');
   if (page === 'practice') navPractice.classList.add('active');
+  if (page === 'directory') {
+    navDirectory.classList.add('active');
+    ensureDirectoryLoaded();
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -211,6 +227,7 @@ function showPage(page) {
   navAbout.addEventListener('click', () => showPage('about'));
   navHelp.addEventListener('click', () => showPage('help'));
   navPractice.addEventListener('click', () => showPage('practice'));
+  navDirectory.addEventListener('click', () => showPage('directory'));
 
   const noticeOverlay = document.getElementById('noticeOverlay');
   const noticeClose = document.getElementById('noticeClose');
@@ -270,7 +287,14 @@ function showPage(page) {
     if(!step.required) return true;
     const v = answers[step.key];
     if(step.type === 'multi') return Array.isArray(v) && v.length > 0;
-    if(step.type === 'text') return typeof v === 'string' && v.trim().length > 0;
+    if(step.type === 'text'){
+      if(typeof v !== 'string' || v.trim().length === 0) return false;
+      if(step.inputType === 'number'){
+      const n = Number(v);
+      return Number.isInteger(n) && n > 0 && n <= 120;
+    }
+  return true;
+}
     if(step.type === 'cascade') return v && v.province !== undefined && v.ward !== undefined;
     if(step.type === 'single') return v !== undefined;
     return true;
@@ -327,15 +351,13 @@ function showPage(page) {
 
       if(step.type === 'text'){
         const val = answers[step.key] || '';
-        html += `<input class="text-input" id="textField" type="text" value="${val.replace(/"/g,'&quot;')}" placeholder="${t(step.placeholder)}">`;
-      }
-
-      if(step.type === 'hihi'){
-        html += `<div class="sample-note">${t({vi:'Bạn có thể bỏ qua câu này!'})}</div>`;
-      }
-
+        const inputType = step.inputType === 'number' ? 'number' : 'text';
+        const extraAttrs = step.inputType === 'number' ? ' min="0" max="120" step="1" inputmode="numeric"' : '';
+        const placeholderText = step.placeholder ? t(step.placeholder) : '';
+        html += `<input class="text-input" id="textField" type="${inputType}" value="${String(val).replace(/"/g,'&quot;')}" placeholder="${placeholderText}"${extraAttrs}>`;
+      }    
       if(step.type === 'cascade'){
-        html += `<div class="sample-note">${t({vi:'(Phạm vi hiện tại: TP. Hồ Chí Minh, sau sáp nhập 01/07/2025)'})}</div>`;
+        html += `<div class="sample-note">${t({vi:'(Phạm vi hiện tại: TP. Hồ Chí Minh và TP. Đồng Nai sau sáp nhập 01/07/2025)'})}</div>`;
 
         if(locationsState.status !== 'ready'){
           if(locationsState.status === 'idle') ensureLocationsLoaded(render);
@@ -396,6 +418,7 @@ function showPage(page) {
         });
       });
     }
+    
     if(step.type === 'multi'){
       wizardBody.querySelectorAll('.option-card').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -411,7 +434,12 @@ function showPage(page) {
     if(step.type === 'text'){
       const field = document.getElementById('textField');
       field.addEventListener('input', () => {
-        answers[step.key] = field.value;
+        let val = field.value;
+        if(step.inputType === 'number'){
+          val = val.replace(/[^\d]/g, '');
+          if(field.value !== val) field.value = val;
+        }
+        answers[step.key] = val;
         wfNext.disabled = !isAnswered(step);
       });
     }
@@ -461,10 +489,6 @@ function showPage(page) {
 
     const list = activeSteps();
     const step = list[cursor];
-
-    // An toàn hai lớp: nếu vì lý do gì đó cursor đã đang đứng ở bước
-    // 'done' (ví dụ bấm lại rất nhanh), chuyển trang ngay thay vì
-    // chờ setTimeout trong render().
     if (step.type === 'done') {
       closeWizard();
       goToResults();
@@ -480,9 +504,7 @@ function showPage(page) {
   });
 
   wfBack.addEventListener('click', goBack);
-
-/* ANIMATION COUNTUP CHO THÔNG TIN NHỮNG CON SỐ */
-
+  
 function animateCounter(element) {
   const target = Number(element.dataset.target);
   const duration = 3000;
@@ -494,12 +516,8 @@ function animateCounter(element) {
       1
     );
 
-    // Chạy nhanh lúc đầu, chậm dần về cuối
     const easedProgress = 1 - Math.pow(1 - progress, 3);
-
-    // Làm tròn thành số nguyên, không có "." hay ","
     const currentValue = Math.round(target * easedProgress);
-
     element.textContent = currentValue;
 
     if (progress < 1) {
@@ -546,23 +564,12 @@ if (footer && wordmark) {
       wordmark.classList.toggle('footer-visible', entry.isIntersecting);
     },
     {
-      /* threshold: 0 => trigger ngay khi PIXEL ĐẦU TIÊN của footer
-         chạm vào viewport (đúng nghĩa "đụng trúng footer"), thay vì
-         chờ tới khi 80% footer hiện ra như trước — đó là lý do trước
-         đây cảm giác logo "không biến mất" (phải cuộn gần hết trang
-         mới thấy hiệu ứng). */
       threshold: 0
     }
   );
 
   footerObserver.observe(footer);
 }
-
-/* =========================================================
-   FEEDBACK FORM SUBMISSION
-   Gửi feedback lên server (POST /api/feedback), lưu vào
-   bảng "feedback" trong mappingsite.db, để hiện ra bên Admin.
-   ========================================================= */
 
 const feedbackForm = document.getElementById('feedbackForm');
 const feedbackSuccess = document.getElementById('feedbackSuccess');
@@ -610,7 +617,6 @@ if (feedbackForm && feedbackSuccess) {
         );
       }
 
-      // Thành công: ẩn form, hiện thông báo cảm ơn
       feedbackForm.classList.add('hidden');
       feedbackSuccess.classList.remove('hidden');
 
@@ -635,7 +641,6 @@ if (feedbackForm && feedbackSuccess) {
     }
   });
 
-  // Send another response
   if (feedbackAgain) {
     feedbackAgain.addEventListener('click', () => {
 
@@ -647,3 +652,161 @@ if (feedbackForm && feedbackSuccess) {
     });
   }
 }
+  const directoryState = { status: 'idle', clinics: [] };
+
+  function escapeHtml(str){
+    return String(str ?? '').replace(/[&<>"']/g, m => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]
+    ));
+  }
+
+  async function ensureDirectoryLoaded(){
+    if(directoryState.status === 'ready' || directoryState.status === 'loading') return;
+    directoryState.status = 'loading';
+    renderDirectoryStatus();
+    try {
+      const res = await fetch('/api/clinics');
+      if(!res.ok) throw new Error('request failed');
+      const data = await res.json();
+      directoryState.clinics = Array.isArray(data) ? data : [];
+      directoryState.status = 'ready';
+      refreshDirectoryUI();
+    } catch (err) {
+      console.error('Failed to load clinics directory:', err);
+      directoryState.status = 'error';
+      renderDirectoryStatus();
+    }
+  }
+
+  function refreshDirectoryUI(){
+    if(directoryState.status !== 'ready') { renderDirectoryStatus(); return; }
+    populateDirectoryFilters();
+    renderDirectoryStatus();
+    renderDirectoryList();
+  }
+
+  function renderDirectoryStatus(){
+    const statusEl = document.getElementById('directoryStatus');
+    if(!statusEl) return;
+    if(directoryState.status === 'loading'){
+      statusEl.textContent = lang() === 'vi' ? 'Đang tải danh sách cơ sở…' : 'Loading clinics…';
+      statusEl.classList.remove('hidden');
+    } else if(directoryState.status === 'error'){
+      statusEl.textContent = lang() === 'vi'
+        ? 'Không tải được danh sách cơ sở. Vui lòng thử lại.'
+        : 'Could not load the directory. Please try again.';
+      statusEl.classList.remove('hidden');
+    } else {
+      statusEl.classList.add('hidden');
+    }
+  }
+
+  function populateDirectoryFilters(){
+    const typeSelect = document.getElementById('directoryTypeFilter');
+    const provSelect = document.getElementById('directoryProvFilter');
+    if(!typeSelect || !provSelect) return;
+
+    const prevType = typeSelect.value;
+    const prevProv = provSelect.value;
+
+    const types = [...new Set(directoryState.clinics.map(c => c.clinic_type).filter(Boolean))].sort();
+    const provs = [...new Set(directoryState.clinics.map(c => c.prov).filter(Boolean))].sort();
+
+    typeSelect.innerHTML =
+      `<option value="">${lang() === 'vi' ? 'Tất cả loại hình' : 'All types'}</option>` +
+      types.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
+    provSelect.innerHTML =
+      `<option value="">${lang() === 'vi' ? 'Tất cả tỉnh/thành' : 'All provinces'}</option>` +
+      provs.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');
+
+    if(types.includes(prevType)) typeSelect.value = prevType;
+    if(provs.includes(prevProv)) provSelect.value = prevProv;
+
+    updateWardFilterOptions();
+  }
+
+  function updateWardFilterOptions(){
+    const provSelect = document.getElementById('directoryProvFilter');
+    const wardSelect = document.getElementById('directoryWardFilter');
+    if(!provSelect || !wardSelect) return;
+
+    const provVal = provSelect.value;
+    const prevWard = wardSelect.value;
+
+    const wards = [...new Set(
+      directoryState.clinics
+        .filter(c => !provVal || c.prov === provVal)
+        .map(c => c.ward)
+        .filter(Boolean)
+    )].sort();
+
+    wardSelect.innerHTML =
+      `<option value="">${lang() === 'vi' ? 'Tất cả phường' : 'All wards'}</option>` +
+      wards.map(w => `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`).join('');
+
+    if(wards.includes(prevWard)) wardSelect.value = prevWard;
+  }
+
+  function renderDirectoryList(){
+    const listEl = document.getElementById('directoryList');
+    if(!listEl) return;
+
+    const searchVal = (document.getElementById('directorySearch')?.value || '').trim().toLowerCase();
+    const typeVal = document.getElementById('directoryTypeFilter')?.value || '';
+    const provVal = document.getElementById('directoryProvFilter')?.value || '';
+    const wardVal = document.getElementById('directoryWardFilter')?.value || '';
+
+    const filtered = directoryState.clinics.filter(c => {
+      if(typeVal && c.clinic_type !== typeVal) return false;
+      if(provVal && c.prov !== provVal) return false;
+      if(wardVal && c.ward !== wardVal) return false;
+      if(searchVal){
+        const haystack = [c.clinic_name, c.address, c.ward, c.prov]
+          .filter(Boolean).join(' ').toLowerCase();
+        if(!haystack.includes(searchVal)) return false;
+      }
+      return true;
+    });
+
+    if(filtered.length === 0){
+      listEl.innerHTML = `<div class="directory-empty">${
+        lang() === 'vi' ? 'Không tìm thấy cơ sở phù hợp.' : 'No matching clinics found.'
+      }</div>`;
+      return;
+    }
+
+    const headLabels = lang() === 'vi'
+  ? ['Tên cơ sở', 'Loại hình', 'Địa chỉ', 'Phường', 'Tỉnh/Thành', 'Điện thoại', 'Website']
+  : ['Clinic Name', 'Type', 'Address', 'Ward', 'Province/City', 'Phone', 'Website'];
+  
+const rows = filtered.map(c => `
+  <tr>
+    <td class="dir-name">${escapeHtml(c.clinic_name || '')}</td>
+    <td>${c.clinic_type ? `<span class="directory-type-tag">${escapeHtml(c.clinic_type)}</span>` : ''}</td>
+    <td class="dir-address">${escapeHtml(c.address || '')}</td>
+    <td>${escapeHtml(c.ward || '')}</td>
+    <td>${escapeHtml(c.prov || '')}</td>
+    <td>${c.phone ? `<a href="tel:${escapeHtml(c.phone)}">${escapeHtml(c.phone)}</a>` : ''}</td>
+    <td>${c.website ? `<a href="${escapeHtml(c.website)}" target="_blank" rel="noopener noreferrer">${lang() === 'vi' ? 'Xem trang' : 'Visit site'}</a>` : ''}</td>
+  </tr>
+`).join('');
+
+listEl.innerHTML = `
+  <table class="directory-table">
+    <thead>
+      <tr>${headLabels.map(h => `<th>${h}</th>`).join('')}</tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+`;
+  }
+
+  document.addEventListener('input', (e) => {
+    if(e.target && e.target.id === 'directorySearch') renderDirectoryList();
+  });
+  document.addEventListener('change', (e) => {
+    if(!e.target) return;
+    if(e.target.id === 'directoryTypeFilter') renderDirectoryList();
+    if(e.target.id === 'directoryProvFilter'){ updateWardFilterOptions(); renderDirectoryList(); }
+    if(e.target.id === 'directoryWardFilter') renderDirectoryList();
+  });

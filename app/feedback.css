@@ -49,8 +49,6 @@
   line-height: 1.75;
 }
 
-/* FORM */
-
 .feedback-form {
   width: 100%;
 }
@@ -115,8 +113,6 @@
   padding-left: 6px;
 }
 
-/* ACTIONS */
-
 .feedback-actions {
   display: flex;
   align-items: center;
@@ -128,7 +124,6 @@
 
 .feedback-note {
   max-width: 270px;
-
   color: var(--ink-soft);
   font-size: 0.72rem;
   line-height: 1.5;
@@ -166,8 +161,6 @@
 .feedback-submit i {
   font-size: 0.72rem;
 }
-
-/* RESPONSIVE */
 
 @media (max-width: 760px) {
   .feedback-section {
