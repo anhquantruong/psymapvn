@@ -4,17 +4,6 @@ const fs = require("fs");
 const path = require("path");
 const { parse } = require("csv-parse/sync");
 const { Pool } = require("pg");
-
-
-// =========================================================
-// CONFIG
-// =========================================================
-//
-// Đường dẫn tới file CSV — mặc định tìm "clinics.csv" cùng
-// thư mục với file script này. Đổi lại nếu file bạn để chỗ
-// khác.
-// =========================================================
-
 const CSV_PATH = path.join(__dirname, "clinics.csv");
 
 const { DATABASE_URL } = process.env;

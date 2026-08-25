@@ -243,6 +243,7 @@ function showPage(page) {
   openNotice(); 
   let answers = {};
   let cursor = 0;
+  let geoPending = false;
 
   function activeSteps(){
     return steps.filter(s => !s.showIf || s.showIf(answers));
@@ -264,17 +265,25 @@ function showPage(page) {
     render();
   }
   function closeWizard(){ overlay.classList.remove('open'); }
-  function goToResults(){
-    const locationAnswer = answers.q4 || {};
-    const provInfo = locationsState.provinces?.[locationAnswer.province];
-    const wardInfo = provInfo?.wards?.[locationAnswer.ward];
+    function goToResults(){
+    let location;
+
+    if(answers.q4geo && !answers.q4geoDenied){
+      location = { type: 'geo', coords: answers.q4geo };
+    } else {
+      const locationAnswer = answers.q4 || {};
+      const provInfo = locationsState.provinces?.[locationAnswer.province];
+      const wardInfo = provInfo?.wards?.[locationAnswer.ward];
+      location = {
+        type: 'manual',
+        provinceVi: provInfo?.vi, provinceEn: provInfo?.en,
+        wardVi: wardInfo?.vi, wardEn: wardInfo?.en,
+      };
+    }
 
     sessionStorage.setItem('mappingWizardResult', JSON.stringify({
       answers,
-      location: {
-        provinceVi: provInfo?.vi, provinceEn: provInfo?.en,
-        wardVi: wardInfo?.vi, wardEn: wardInfo?.en,
-      },
+      location,
     }));
 
     window.location.href = '../result/results.html';
@@ -337,6 +346,9 @@ function showPage(page) {
       html += `<div class="wizard-question">${t(step.q)}</div>`;
       if(step.hint) html += `<div class="wizard-hint">${t(step.hint)}</div>`;
       else html += `<div class="wizard-hint" style="visibility:hidden">.</div>`;
+      if(step.key === 'q4perm' && geoPending){
+        html += `<div class="wizard-hint" style="color:var(--teal)">${t({vi:'Đang chờ bạn cấp quyền truy cập vị trí trên trình duyệt…', en:'Waiting for you to grant location access in your browser…'})}</div>`;
+      }
 
       if(step.type === 'single' || step.type === 'multi'){
         const selected = answers[step.key];
@@ -387,10 +399,10 @@ function showPage(page) {
         }
       }
     }
-
+    
     wizardBody.innerHTML = html;
     bindStepEvents(step);
-    wfNext.disabled = !isAnswered(step);
+    wfNext.disabled = !isAnswered(step) || (step.key === 'q4perm' && geoPending);
     wfNext.innerHTML = (cursor === list.length - 2 && list[list.length-1].type === 'done')
       ? `<span lang-el="vi">Hoàn tất</span><span lang-el="en">Finish</span>`
       : `<span lang-el="vi">Tiếp theo</span><span lang-el="en">Next</span>`;
@@ -398,6 +410,28 @@ function showPage(page) {
   }
 
   function applyLangAttrs(){
+  }
+    function requestGeolocation(onDone){
+    if(!navigator.geolocation){
+      answers.q4geo = null;
+      answers.q4geoDenied = true;
+      if(onDone) onDone();
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        answers.q4geo = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        answers.q4geoDenied = false;
+        if(onDone) onDone();
+      },
+      (err) => {
+        console.error('Geolocation error (có thể do người dùng bấm "Don\'t allow"):', err);
+        answers.q4geo = null;
+        answers.q4geoDenied = true;
+        if(onDone) onDone();
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
   }
 
   function bindStepEvents(step){
@@ -410,10 +444,22 @@ function showPage(page) {
       });
       return;
     }
+
     if(step.type === 'single'){
       wizardBody.querySelectorAll('.option-card').forEach(btn => {
         btn.addEventListener('click', () => {
-          answers[step.key] = parseInt(btn.dataset.opt);
+          const optIndex = parseInt(btn.dataset.opt);
+          answers[step.key] = optIndex;
+          if(step.key === 'q4perm' && optIndex === 0){
+            answers.q4geoDenied = false;
+            geoPending = true;
+            render();
+            requestGeolocation(() => {
+              geoPending = false;
+              render();
+            });
+            return;
+          }
           render();
         });
       });
@@ -778,7 +824,7 @@ if (feedbackForm && feedbackSuccess) {
     const headLabels = lang() === 'vi'
   ? ['Tên cơ sở', 'Loại hình', 'Địa chỉ', 'Phường', 'Tỉnh/Thành', 'Điện thoại', 'Website']
   : ['Clinic Name', 'Type', 'Address', 'Ward', 'Province/City', 'Phone', 'Website'];
-  
+
 const rows = filtered.map(c => `
   <tr>
     <td class="dir-name">${escapeHtml(c.clinic_name || '')}</td>
@@ -810,3 +856,26 @@ listEl.innerHTML = `
     if(e.target.id === 'directoryProvFilter'){ updateWardFilterOptions(); renderDirectoryList(); }
     if(e.target.id === 'directoryWardFilter') renderDirectoryList();
   });
+
+  document.querySelectorAll('.faq-card-head').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+    });
+  });
+
+  const faqSection = document.getElementById('faqSection');
+  if (faqSection) {
+    const faqObserver = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            faqSection.classList.add('in-view');
+            observer.unobserve(faqSection);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    faqObserver.observe(faqSection);
+  }

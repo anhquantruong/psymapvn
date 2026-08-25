@@ -58,14 +58,14 @@ const LOCATIONS_API = 'https://provinces.open-api.vn/api/v2/?depth=2';
         {vi:'Người thân', en:'Relatives'},
         {vi:'Others', en:'Others'},
       ]},
-      
+
     { key:'q2', type:'text', required:true, inputType:'number',
         q:{vi:'Người cần tham vấn đang ở độ tuổi nào?', en:'What age group is the person who needs counseling in?'},
         hint: {vi: 'Nhập tuổi người cần tham vấn.', en: "Please enter the age of the person who needs counseling service."},
         placeholder: {vi:'Ví dụ: 25', en:'e.g. 25'},
       },
 
-    { key:'q3', type:'single', required: false,
+        { key:'q3', type:'single', required: false,
       q:{vi:'Giới tính của người cần tham vấn là gì?', en:'What is the gender of the person who needs counseling?'},
       hint:{vi:'Không bắt buộc trả lời.', en:'Optional. You can skip this question!'},
       options:[
@@ -76,61 +76,17 @@ const LOCATIONS_API = 'https://provinces.open-api.vn/api/v2/?depth=2';
         {vi:'Không muốn tiết lộ', en:'Prefer not to say'},
       ]},
 
+    { key:'q4perm', type:'single', required:true,
+      q:{vi:'Bạn có đồng ý cho PsyMapVN truy cập vị trí của bạn không?', en:'Do you agree to let PsyMapVN access your location?'},
+      hint:{vi:'Giúp chúng mình gợi ý cơ sở gần bạn nhất. Vị trí không được lưu trữ sau phiên sàng lọc.', en:"This helps us suggest facilities closest to you. Your location isn't stored after this session."},
+      options:[
+        {vi:'Đồng ý', en:'Agree'},
+        {vi:'Không đồng ý', en:'Disagree'},
+      ]},
+
     { key:'q4', type:'cascade', required:true,
+      showIf:a => a.q4perm === 1 || a.q4geoDenied === true,
       q:{vi:'Bạn đang sinh sống tại địa phương nào?', en:'Where do you currently live now?'},
       hint:{vi:'Chọn Tỉnh/Thành trước, sau đó chọn Phường.', en:'Select a Province/City first, then a Ward.'}},
-    
-    { key:'q5', type:'single', required:true,
-      q:{vi:'Bạn muốn tìm cơ sở tham vấn như thế nào', en:'How do you search for mental health counseling facilities?'},
-      options:[
-        {vi:'Gần tôi nhất.', en:'Nearest to me.'},
-        {vi:'Trong địa phương tôi đang sinh sống.', en:'Within the province/city I am living.'},
-        {vi:'Tôi sẵn sàng đi xa để tìm cơ sở phù hợp', en:'I’m willing to travel farther to find a suitable facility.'},
-      ]},
-
-    { key:'q6', type:'single', required:true,
-      q:{vi:'Bạn muốn tìm cơ sở tham vấn nào?', en:'What type of facility are you looking for?'},
-      options:[
-        {vi:'Công lập', en:'Public'},
-        {vi:'Tư nhân', en:'Private'},
-        {vi:'Không quan trọng', en:'No preference'},
-      ]},
-
-    { key:'q8', type:'multi', required:true,
-      q:{vi:'Chủ đề bạn đang quan tâm', en:'Which topics are you concerned about?'},
-      hint:{vi:'Có thể chọn nhiều đáp án.', en:'You may select more than one.'},
-      grid:true,
-      options:[
-        {vi:'Lo âu', en:'Anxiety'},
-        {vi:'Trầm cảm', en:'Depression'},
-        {vi:'Stress', en:'Stress'},
-        {vi:'Kiệt sức', en:'Burnout'},
-        {vi:'Khủng hoảng cảm xúc', en:'Emotional crisis'},
-        {vi:'Mất ngủ', en:'Insomnia'},
-        {vi:'Quan hệ gia đình', en:'Family relationships'},
-        {vi:'Quan hệ tình cảm', en:'Romantic relationships'},
-        {vi:'Hôn nhân', en:'Marriage'},
-        {vi:'Nuôi dạy con', en:'Parenting'},
-        {vi:'Sang chấn', en:'Trauma'},
-        {vi:'ADHD', en:'ADHD'},
-        {vi:'Phổ Tự kỷ', en:'Autism Spectrum Disorder'},
-        {vi:'Rối loạn ăn uống', en:'Eating disorders'},
-        {vi:'Nghiện', en:'Addiction'},
-        {vi:'Khó khăn trong học tập', en:'Academic difficulties'},
-        {vi:'Khó khăn trong công việc', en:'Work difficulties'},
-        {vi:'Khác', en:'Other'},
-      ]},
-    { key:'q9', type:'multi', required: false,
-      q:{vi:'Bạn có thuộc nhóm đối tượng cần được hỗ trợ chuyên biệt không?', en:'Do you belong to a group that needs specialized support?'},
-      hint:{vi:'Không bắt buộc trả lời.', en:'Optional.'},
-      options:[
-        {vi:'Hỗ trợ LGBTQ+', en:'LGBTQ+ support'},
-        {vi:'Hỗ trợ người bệnh H', en:'Support for people living with H'},
-        {vi:'Hỗ trợ Nhân viên Y Tế', en:'Support for healthcare workers'},
-        {vi:'Hỗ trợ nạn nhân nạn buôn bán người', en:'Support for survivors of human trafficking'},
-        {vi:'Hỗ trợ nạn nhân bạo lực học đường / bạo lực gia đình', en:'Support for survivors of school or domestic violence'},
-        {vi:'Hỗ trợ người mắc bệnh mạn tính', en:'Support for people with chronic illness'},
-        {vi:'Hỗ trợ trẻ em', en:'Children support'},
-      ]},
     { key:'done', type:'done' },
   ];

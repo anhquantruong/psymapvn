@@ -1,3 +1,244 @@
+const body = document.body;
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  const NAV_COLLAPSE_QUERY = '(max-width: 1024px)';
+
+  function closeNavMenu(){
+    if(!navLinks || !navToggle) return;
+    navLinks.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+  function openNavMenu(){
+    if(!navLinks || !navToggle) return;
+    navLinks.classList.add('open');
+    navToggle.setAttribute('aria-expanded', 'true');
+  }
+  function toggleNavMenu(){
+    if(!navLinks) return;
+    if(navLinks.classList.contains('open')) closeNavMenu();
+    else openNavMenu();
+  }
+
+  if(navToggle && navLinks){
+
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleNavMenu();
+    });
+
+    document.addEventListener('click', (e) => {
+      if(!window.matchMedia(NAV_COLLAPSE_QUERY).matches) return;
+      if(navLinks.contains(e.target) || navToggle.contains(e.target)) return;
+      closeNavMenu();
+    });
+
+    ['navHome', 'navAbout', 'navPractice', 'navHelp'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el){
+        el.addEventListener('click', () => {
+          if(window.matchMedia(NAV_COLLAPSE_QUERY).matches) closeNavMenu();
+        });
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if(!window.matchMedia(NAV_COLLAPSE_QUERY).matches) closeNavMenu();
+    });
+  }
+
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsPanel = document.getElementById('settingsPanel');
+  const lightBtn = document.getElementById('lightBtn');
+  const darkBtn = document.getElementById('darkBtn');
+  const sizeBtns = document.querySelectorAll('.size-btn');
+  const viBtn = document.getElementById('viBtn');
+  const enBtn = document.getElementById('enBtn');
+
+  settingsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = settingsPanel.classList.toggle('open');
+    settingsBtn.setAttribute('aria-expanded', isOpen);
+  });
+  document.addEventListener('click', (e) => {
+    if(!settingsPanel.contains(e.target) && e.target !== settingsBtn){
+      settingsPanel.classList.remove('open');
+      settingsBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  function setTheme(theme){
+    body.setAttribute('data-theme', theme);
+    lightBtn.classList.toggle('active', theme === 'light');
+    darkBtn.classList.toggle('active', theme === 'dark');
+  }
+  lightBtn.addEventListener('click', () => setTheme('light'));
+  darkBtn.addEventListener('click', () => setTheme('dark'));
+
+  sizeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sizeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.documentElement.style.setProperty('--font-scale', btn.dataset.scale);
+    });
+  });
+  const HERO_TYPING_TEXT = {
+    vi: 'Không gian tìm kiếm sự hỗ trợ tâm lý an toàn!',
+    en: 'A respectful space to find mental health support!',
+  };
+  const heroTypingVi = document.getElementById('heroTypingVi');
+  const heroTypingEn = document.getElementById('heroTypingEn');
+  let heroTypingTimer = null;
+
+  function stopHeroTyping(){
+    if(heroTypingTimer){
+      clearInterval(heroTypingTimer);
+      heroTypingTimer = null;
+    }
+    document.querySelectorAll('.typing-cursor').forEach(c => c.classList.remove('is-active'));
+  }
+
+  function typeHeroTitle(lang, instant){
+    stopHeroTyping();
+    const text = HERO_TYPING_TEXT[lang];
+    const target = lang === 'vi' ? heroTypingVi : heroTypingEn;
+    const other = lang === 'vi' ? heroTypingEn : heroTypingVi;
+    const cursor = target.parentElement.querySelector('.typing-cursor');
+
+    other.textContent = '';
+    target.textContent = '';
+
+    if(instant || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      target.textContent = text;
+      return;
+    }
+
+    cursor.classList.add('is-active');
+    let i = 0;
+    const speed = lang === 'vi' ? 42 : 34;
+
+    heroTypingTimer = setInterval(() => {
+      if(i < text.length){
+        target.textContent += text.charAt(i);
+        i++;
+      } else {
+        stopHeroTyping();
+      }
+    }, speed);
+  }
+
+    function setLang(lang){
+    body.setAttribute('data-lang', lang);
+    viBtn.classList.toggle('active', lang === 'vi');
+    enBtn.classList.toggle('active', lang === 'en');
+    if(!pageHome.classList.contains('hidden')) typeHeroTitle(lang);
+    if(!pageDirectory.classList.contains('hidden')) refreshDirectoryUI();
+  }
+  viBtn.addEventListener('click', () => setLang('vi'));
+  enBtn.addEventListener('click', () => setLang('en'));
+  typeHeroTitle(body.getAttribute('data-lang') || 'vi');
+
+  const navHome = document.getElementById('navHome');
+  const navAbout = document.getElementById('navAbout');
+  const navHelp = document.getElementById('navHelp');
+  const navPractice = document.getElementById('navPractice');
+  const pageHome = document.getElementById('pageHome');
+  const pageAbout = document.getElementById('pageAbout');
+  const pageHelp = document.getElementById('pageHelp');
+  const pagePractice = document.getElementById('pagePractice');
+  const navDirectory = document.getElementById('navDirectory');
+  const pageDirectory = document.getElementById('pageDirectory');
+  const footerDirectory = document.getElementById('footerDirectory');
+  if (footerDirectory) {
+    footerDirectory.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPage('directory');
+    });
+  }
+  const footerAbout = document.getElementById('footerAbout');
+      footerAbout.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPage('about');
+      });
+  const footerPractice = document.getElementById('footerPractice');
+      footerPractice.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPage('practice');
+      });
+  const footerHelp = document.getElementById('footerHelp');
+      footerHelp.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPage('help');
+      });
+  const footerHome = document.getElementById('footerHome');
+      footerHome.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPage('home');
+      });
+  const footerFeedback = document.getElementById('footerFeedback');
+  const feedbackF = document.getElementById('feedbackForm');
+
+if (footerFeedback && feedbackF) {
+  footerFeedback.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    showPage('help');
+
+    setTimeout(() => {
+      const y =
+        feedbackF.getBoundingClientRect().top +
+        window.scrollY -
+        100;
+
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      });
+    }, 150);
+  });
+}
+
+function showPage(page) {
+  pageHome.classList.toggle('hidden', page !== 'home');
+  pageAbout.classList.toggle('hidden', page !== 'about');
+  pageHelp.classList.toggle('hidden', page !== 'help');
+  pagePractice.classList.toggle('hidden', page !== 'practice');
+  pageDirectory.classList.toggle('hidden', page !== 'directory');
+  navHome.classList.remove('active');
+  navAbout.classList.remove('active');
+  navHelp.classList.remove('active');
+  navPractice.classList.remove('active');
+  navDirectory.classList.remove('active');
+  if (page === 'home') navHome.classList.add('active');
+  if (page === 'about') navAbout.classList.add('active');
+  if (page === 'help') navHelp.classList.add('active');
+  if (page === 'practice') navPractice.classList.add('active');
+  if (page === 'directory') {
+    navDirectory.classList.add('active');
+    ensureDirectoryLoaded();
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (page === 'home') {
+    typeHeroTitle(body.getAttribute('data-lang') || 'vi');
+  }
+}
+  navHome.addEventListener('click', () => showPage('home'));
+  navAbout.addEventListener('click', () => showPage('about'));
+  navHelp.addEventListener('click', () => showPage('help'));
+  navPractice.addEventListener('click', () => showPage('practice'));
+  navDirectory.addEventListener('click', () => showPage('directory'));
+
+  const noticeOverlay = document.getElementById('noticeOverlay');
+  const noticeClose = document.getElementById('noticeClose');
+
+  function openNotice(){ noticeOverlay.classList.add('open'); }
+  function closeNotice(){ noticeOverlay.classList.remove('open'); }
+
+  noticeClose.addEventListener('click', closeNotice);
+  noticeOverlay.addEventListener('click', (e) => {
+    if(e.target === noticeOverlay) closeNotice();
+  });
 (function () {
   'use strict';
 
@@ -7,6 +248,15 @@
   const MINUTES_TO_KM = { 0: 2, 1: 5, 2: 8, 3: 0 }; 
   const DEFAULT_RADIUS_KM = 5;
   const FALLBACK_CENTER = { lat: 10.7769, lng: 106.7009 };
+  const PROVINCE_FALLBACK_CENTERS = {
+    'Hồ Chí Minh': { lat: 10.7769, lng: 106.7009 },
+    'Đồng Nai': { lat: 10.9574, lng: 106.8426 },
+  };
+  function fallbackForProvince(provinceVi){
+   const key = (provinceVi || '').toLowerCase();
+   const match = Object.keys(PROVINCE_FALLBACK_CENTERS).find(k => key.includes(k));
+    return match ? PROVINCE_FALLBACK_CENTERS[match] : FALLBACK_CENTER;
+  }
   const TOPICS_Q8 = [
     { vi: 'Lo âu', en: 'Anxiety', kw: ['lo âu', 'anxiety'] },
     { vi: 'Trầm cảm', en: 'Depression', kw: ['trầm cảm', 'depression'] },
@@ -94,37 +344,70 @@
 
   function getReferencePoint() {
     return new Promise((resolve) => {
-      const wantsNearestMe = state.answers.q5 === 0;
-
-      if (wantsNearestMe && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, source: 'gps' }),
-          () => geocodeSelectedWard().then(resolve),
-          { timeout: 8000 }
-        );
-      } else {
-        geocodeSelectedWard().then(resolve);
+      if (state.location && state.location.type === 'geo' && state.location.coords) {
+        resolve({ lat: state.location.coords.lat, lng: state.location.coords.lng, source: 'gps' });
+        return;
       }
+      geocodeSelectedWard().then(resolve);
     });
+  }
+
+  async function tryGeocode(query) {
+
+    try {
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(query)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.lat != null && data.lng != null) {
+          return { lat: parseFloat(data.lat), lng: parseFloat(data.lng) };
+        }
+        console.warn(`Không tìm thấy kết quả cho truy vấn "${query}" (backend geocode)`);
+      } else {
+        console.warn(`Geocode API trả về lỗi HTTP ${res.status} cho truy vấn "${query}" — thử Nominatim.`);
+      }
+    } catch (e) {
+      console.warn(`Geocode nội bộ lỗi cho truy vấn "${query}", thử Nominatim:`, e);
+    }
+
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`,
+        { headers: { Accept: 'application/json' } }
+      );
+      if (!res.ok) {
+        console.warn(`Nominatim trả về lỗi HTTP ${res.status} cho truy vấn "${query}"`);
+        return null;
+      }
+      const results = await res.json();
+      if (Array.isArray(results) && results.length && results[0].lat != null && results[0].lon != null) {
+        return { lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon) };
+      }
+      console.warn(`Không tìm thấy kết quả cho truy vấn "${query}" (Nominatim)`);
+      return null;
+    } catch (e) {
+      console.warn(`Geocode lỗi cho truy vấn "${query}" (Nominatim):`, e);
+      return null;
+    }
   }
 
   async function geocodeSelectedWard() {
     const { wardVi, provinceVi } = state.location || {};
-    if (!wardVi && !provinceVi) return { ...FALLBACK_CENTER, source: 'fallback' };
-
-    const q = [wardVi, provinceVi, 'Việt Nam'].filter(Boolean).join(', ');
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`
-      );
-      const data = await res.json();
-      if (data && data[0]) {
-        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), source: 'geocode' };
-      }
-    } catch (e) {
-      console.warn('Geocode thất bại, dùng toạ độ mặc định:', e);
+    if (!wardVi && !provinceVi) {
+      console.warn('Không có wardVi/provinceVi trong state.location — dùng toạ độ mặc định.');
+      return { ...FALLBACK_CENTER, source: 'fallback' };
     }
-    return { ...FALLBACK_CENTER, source: 'fallback' };
+
+    if (wardVi && provinceVi) {
+      const preciseResult = await tryGeocode([wardVi, provinceVi, 'Việt Nam'].filter(Boolean).join(', '));
+      if (preciseResult) return { ...preciseResult, source: 'geocode' };
+    }
+
+    if (provinceVi) {
+      const provinceResult = await tryGeocode([provinceVi, 'Việt Nam'].filter(Boolean).join(', '));
+      if (provinceResult) return { ...provinceResult, source: 'geocode-province' };
+    }
+    console.warn(`Không geocode được "${wardVi || ''}, ${provinceVi || ''}" — dùng toạ độ mặc định của tỉnh/thành.`);
+    return { ...fallbackForProvince(provinceVi), source: 'fallback' };
   }
 
   async function loadClinics() {
@@ -442,15 +725,66 @@
     highlightMarker(c.id);
   }
 
+  // --- Tile layer: primary = OpenStreetMap, fallback = CartoDB Voyager ---
+  // If the OSM tile hostnames can't be resolved (DNS/network block) or tiles
+  // otherwise fail to load, swap to a different tile provider automatically
+  // instead of leaving the map blank.
+  const MAPTILER_KEY = '4ryegTLnvRGlcrr8Phnu';
+
+const TILE_PROVIDERS = [
+  {
+    // MapTiler — thay OpenStreetMap
+    url: `https://api.maptiler.com/maps/base-v4/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
+    options: {
+      attribution:
+        '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+      maxZoom: 20,
+      tileSize: 512,   // MapTiler trả tile 512px, bắt buộc phải set
+      zoomOffset: -1,  // bù lại cho tileSize 512 để không bị lệch vị trí
+    },
+  },
+  {
+    // Dự phòng nếu MapTiler lỗi (hết quota, mất mạng...)
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    options: {
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+      subdomains: 'abcd',
+      maxZoom: 19,
+    },
+  },
+];
+
+function addResilientTileLayer(map) {
+  let providerIndex = 0;
+  let switched = false;
+  let tileErrorCount = 0;
+  const ERROR_THRESHOLD = 3;
+
+  function attach(idx) {
+    const provider = TILE_PROVIDERS[idx];
+    const layer = L.tileLayer(provider.url, provider.options);
+    layer.on('tileerror', () => {
+      tileErrorCount++;
+      if (!switched && tileErrorCount >= ERROR_THRESHOLD && idx + 1 < TILE_PROVIDERS.length) {
+        switched = true;
+        console.warn(`Nhiều tile bị lỗi từ provider #${idx} — chuyển sang provider dự phòng.`);
+        map.removeLayer(layer);
+        attach(idx + 1);
+      }
+    });
+    layer.addTo(map);
+  }
+
+  attach(providerIndex);
+}
+
   function initMap() {
     state.map = L.map('resultsMap', { scrollWheelZoom: true }).setView(
       [state.refPoint?.lat || FALLBACK_CENTER.lat, state.refPoint?.lng || FALLBACK_CENTER.lng],
       13
     );
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
-      maxZoom: 19,
-    }).addTo(state.map);
+
+    addResilientTileLayer(state.map);
 
     if (state.refPoint) {
       L.circleMarker([state.refPoint.lat, state.refPoint.lng], {
@@ -578,3 +912,4 @@
 
   document.addEventListener('DOMContentLoaded', init);
 })();
+

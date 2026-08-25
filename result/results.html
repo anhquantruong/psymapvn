@@ -12,25 +12,206 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body data-theme="light" data-lang="vi">
+  <header class="site-header">
+    <div class="header-top">
+      <a class="wordmark" href="#" aria-label="PsyMapVN"> <img src="../app/assets/m-logo.png" alt="Logo of PsyMapVN"></a>
 
-  <nav class="navbar">
-    <a class="wordmark" href="../app/index.html" aria-label="PsyMapVN">
-      <img src="" alt="PsyMapVN">
-    </a>
-
-    <div class="nav-links">
-      <button class="nav-item" id="backHomeBtn" type="button">
-        <span lang-el="vi">← Trang chủ</span>
-        <span lang-el="en">← Home</span>
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        type="button"
+        aria-label="Mở menu"
+        aria-controls="navLinks"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
-
-      <div class="lang-toggle" id="langToggle">
-        <div class="lang-pill"></div>
-        <button id="viBtn" class="active" type="button">🇻🇳</button>
-        <button id="enBtn" type="button">🇬🇧</button>
+      <div class="nav-links" id="navLinks">
+        <div class="nav-item-wrap" data-menu="home">
+          <button class="nav-item active" id="navHome" type="button">
+            <span lang-el="vi">Trang chủ</span><span lang-el="en">Home</span>
+            <i class="fa-solid fa-chevron-down nav-caret" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="nav-item-wrap" data-menu="about">
+          <button class="nav-item" id="navAbout" type="button">
+            <span lang-el="vi">Giới thiệu</span><span lang-el="en">About</span>
+            <i class="fa-solid fa-chevron-down nav-caret" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="nav-item-wrap" data-menu="practice">
+          <button class="nav-item" id="navPractice" type="button">
+            <span lang-el="vi">Bài tập sức khoẻ tinh thần</span><span lang-el="en">Mental wellness exercise</span>
+            <i class="fa-solid fa-chevron-down nav-caret" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="nav-item-wrap" data-menu="directory">
+          <button class="nav-item" id="navDirectory" type="button">
+            <span lang-el="vi">Danh mục cơ sở</span><span lang-el="en">Clinics directory</span>
+          </button>
+        <div class="nav-item-wrap" data-menu="help">
+        <div class="nav-item-wrap" data-menu="help">
+          <button class="nav-item" id="navHelp" type="button">
+            <span lang-el="vi">Trợ giúp</span><span lang-el="en">Help center</span>
+            <i class="fa-solid fa-chevron-down nav-caret" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="settings-wrap">
+          <button class="nav-item" id="settingsBtn" type="button" aria-expanded="false">
+            <span lang-el="vi">Cài đặt</span><span lang-el="en">Settings</span>
+          </button>
+          <div class="settings-panel" id="settingsPanel">
+            <div class="settings-row">
+              <span class="settings-label"><span lang-el="vi">Giao diện</span><span lang-el="en">Appearance</span></span>
+              <div class="theme-switch">
+                <button id="lightBtn" class="active" type="button">
+                  <span lang-el="vi">Sáng</span><span lang-el="en">Light</span>
+                </button>
+                <button id="darkBtn" type="button">
+                  <span lang-el="vi">Tối</span><span lang-el="en">Dark</span>
+                </button>
+              </div>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label"><span lang-el="vi">Cỡ chữ</span><span lang-el="en">Text size</span></span>
+              <div class="size-switch">
+                <button class="size-btn" data-scale="0.925" type="button">
+                  <span lang-el="vi">Nhỏ</span><span lang-el="en">Small</span>
+                </button>
+                <button class="size-btn active" data-scale="1" type="button">
+                  <span lang-el="vi">Vừa</span><span lang-el="en">Medium</span>
+                </button>
+                <button class="size-btn" data-scale="1.125" type="button">
+                  <span lang-el="vi">To</span><span lang-el="en">Large</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lang-toggle" id="langToggle">
+          <div class="lang-pill"></div>
+          <button id="viBtn" class="active" type="button">🇻🇳</button>
+          <button id="enBtn" type="button">🇬🇧</button>
+        </div>
+        <button class="header-cta" type="button" onclick="openWizard()">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span lang-el="vi">Tìm cơ sở</span><span lang-el="en">Find a clinic</span>
+        </button>
       </div>
     </div>
-  </nav>
+    <div class="mega-panel" data-panel="home">
+      <div class="mega-inner">
+        <div class="mega-lead">
+          <span class="mega-lead-label"><span lang-el="vi">Trang chủ</span><span lang-el="en">Home</span></span>
+          <p><span lang-el="vi">Nơi bắt đầu hành trình tìm kiếm sự hỗ trợ tâm lý phù hợp với bạn.</span><span lang-el="en">Where your search for the right mental health support begins.</span></p>
+          <a class="mega-lead-link" href="#" onclick="event.preventDefault(); showPage('home');">
+            <span lang-el="vi">Về trang chủ</span><span lang-el="en">Go home</span> <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+        <div class="mega-links">
+          <div class="mega-col">
+            <h4><span lang-el="vi">Bắt đầu</span><span lang-el="en">Get started</span></h4>
+            <a href="#" onclick="event.preventDefault(); openWizard();"><span lang-el="vi">Công cụ sàng lọc</span><span lang-el="en">Clinics searching tool!</span></a>
+            <a href="#" onclick="event.preventDefault(); document.querySelector('.problem-section')?.scrollIntoView({behavior:'smooth'});"><span lang-el="vi">Vì sao điều này quan trọng</span><span lang-el="en">Why this matters</span></a>
+            <a href="#" onclick="event.preventDefault(); document.querySelector('.journey-section')?.scrollIntoView({behavior:'smooth'});"><span lang-el="vi">Quy trình 3 bước</span><span lang-el="en">The 3-step process</span></a>
+          </div>
+          <div class="mega-col">
+            <h4><span lang-el="vi">Khám phá thêm</span><span lang-el="en">Explore</span></h4>
+            <a href="#" onclick="event.preventDefault(); showPage('about');"><span lang-el="vi">Về PsyMapVN</span><span lang-el="en">About PsyMapVN</span></a>
+            <a href="#" onclick="event.preventDefault(); showPage('practice');"><span lang-el="vi">Bài tập thư giãn</span><span lang-el="en">Wellness exercises</span></a>
+          </div>
+        </div>
+        <div class="mega-feature">
+          <span class="mega-feature-eyebrow"><span lang-el="vi">Nổi bật</span><span lang-el="en">Featured</span></span>
+          <h4><span lang-el="vi">Bắt đầu sàng lọc!</span><span lang-el="en">Start screening now!</span></h4>
+          <p><span lang-el="vi">5 phút để tìm cơ sở tham vấn phù hợp nhất với bạn.</span><span lang-el="en">5 minutes to find the facility that fits you best.</span></p>
+          <a href="#" onclick="event.preventDefault(); openWizard();"><span lang-el="vi">Bắt đầu ngay</span><span lang-el="en">Start now</span> <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="mega-panel" data-panel="about">
+      <div class="mega-inner">
+        <div class="mega-lead">
+          <span class="mega-lead-label"><span lang-el="vi">Giới thiệu</span><span lang-el="en">About</span></span>
+          <p><span lang-el="vi">Tìm hiểu sứ mệnh và đội ngũ đứng sau PsyMapVN.</span><span lang-el="en">Learn about the mission and team behind PsyMapVN.</span></p>
+          <a class="mega-lead-link" href="#" onclick="event.preventDefault(); showPage('about');">
+            <span lang-el="vi">Xem đầy đủ</span><span lang-el="en">See full page</span> <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+        <div class="mega-links">
+          <div class="mega-col">
+            <h4><span lang-el="vi">Nội dung</span><span lang-el="en">Contents</span></h4>
+            <a href="#" onclick="event.preventDefault(); showPage('about');"><span lang-el="vi">Về PsyMapVN</span><span lang-el="en">About PsyMapVN</span></a>
+            <a href="#" onclick="event.preventDefault(); showPage('about'); setTimeout(()=>document.querySelector('.team-grid')?.scrollIntoView({behavior:'smooth'}),150);"><span lang-el="vi">Đội ngũ đồng hành</span><span lang-el="en">Our team</span></a>
+          </div>
+          <div class="mega-col">
+            <h4><span lang-el="vi">Khác</span><span lang-el="en">Other</span></h4>
+            <a href="#" onclick="event.preventDefault(); showPage('help');"><span lang-el="vi">Trợ giúp</span><span lang-el="en">Help center</span></a>
+          </div>
+        </div>
+        <div class="mega-feature">
+          <span class="mega-feature-eyebrow"><span lang-el="vi">Cam kết</span><span lang-el="en">Our commitment</span></span>
+          <h4><span lang-el="vi">Phi lợi nhuận & bảo mật</span><span lang-el="en">Non-profit &amp; confidential</span></h4>
+          <p><span lang-el="vi">Thông tin bạn chia sẻ không được lưu trữ hay bán cho bên thứ ba.</span><span lang-el="en">What you share is never stored or sold to third parties.</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="mega-panel" data-panel="practice">
+      <div class="mega-inner">
+        <div class="mega-lead">
+          <span class="mega-lead-label"><span lang-el="vi">Bài tập</span><span lang-el="en">Practice</span></span>
+          <p><span lang-el="vi">Những bài thực hành ngắn giúp bạn chậm lại và kết nối với chính mình.</span><span lang-el="en">Short exercises to help you slow down and reconnect with yourself.</span></p>
+          <a class="mega-lead-link" href="#" onclick="event.preventDefault(); showPage('practice');">
+            <span lang-el="vi">Xem tất cả</span><span lang-el="en">See all</span> <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+        <div class="mega-links">
+          <div class="mega-col">
+            <h4><span lang-el="vi">3 phút</span><span lang-el="en">3 minutes</span></h4>
+            <a href="#" onclick="event.preventDefault(); showPage('practice'); setTimeout(()=>document.getElementById('openGrounding')?.click(),150);"><span lang-el="vi">Grounding 5-4-3-2-1</span><span lang-el="en">5–4–3–2–1 Grounding</span></a>
+          </div>
+          <div class="mega-col">
+            <h4><span lang-el="vi">Sắp có</span><span lang-el="en">Coming soon</span></h4>
+            <a href="#" onclick="event.preventDefault(); showPage('practice');"><span lang-el="vi">Thở chậm</span><span lang-el="en">Slow breathing</span></a>
+            <a href="#" onclick="event.preventDefault(); showPage('practice');"><span lang-el="vi">Body Scan</span><span lang-el="en">Body scan</span></a>
+          </div>
+        </div>
+        <div class="mega-feature">
+          <span class="mega-feature-eyebrow"><span lang-el="vi">Gợi ý</span><span lang-el="en">Tip</span></span>
+          <h4><span lang-el="vi">Chỉ mất vài phút</span><span lang-el="en">Just a few minutes</span></h4>
+          <p><span lang-el="vi">Không cần chuẩn bị gì, bạn có thể dừng bất cứ lúc nào.</span><span lang-el="en">No preparation needed — stop whenever you like.</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="mega-panel" data-panel="help">
+      <div class="mega-inner">
+        <div class="mega-lead">
+          <span class="mega-lead-label"><span lang-el="vi">Trợ giúp</span><span lang-el="en">Help</span></span>
+          <p><span lang-el="vi">Hướng dẫn sử dụng và kênh gửi góp ý cho đội ngũ PsyMapVN.</span><span lang-el="en">How-to guides and feedback channels for the PsyMapVN team.</span></p>
+          <a class="mega-lead-link" href="#" onclick="event.preventDefault(); showPage('help');">
+            <span lang-el="vi">Đến trang trợ giúp</span><span lang-el="en">Go to help center</span> <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+        <div class="mega-links">
+          <div class="mega-col">
+            <h4><span lang-el="vi">Hướng dẫn</span><span lang-el="en">Guidance</span></h4>
+            <a href="#" onclick="event.preventDefault(); showPage('help');"><span lang-el="vi">Cách sử dụng PsyMapVN</span><span lang-el="en">How PsyMapVN works</span></a>
+          </div>
+          <div class="mega-col">
+            <h4><span lang-el="vi">Kết nối</span><span lang-el="en">Connect</span></h4>
+            <a href="#" onclick="event.preventDefault(); showPage('help'); setTimeout(()=>document.getElementById('feedbackForm')?.scrollIntoView({behavior:'smooth'}),150);"><span lang-el="vi">Gửi góp ý</span><span lang-el="en">Send feedback</span></a>
+          </div>
+        </div>
+        <div class="mega-feature">
+          <span class="mega-feature-eyebrow"><span lang-el="vi">Liên hệ</span><span lang-el="en">Contact</span></span>
+          <h4>psymapvn@gmail.com</h4>
+          <p><span lang-el="vi">Chúng mình phản hồi trong vòng 2–3 ngày làm việc.</span><span lang-el="en">We reply within 2–3 business days.</span></p>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <main class="results-page" id="resultsPage">
     <section class="rp-hero">
@@ -182,8 +363,8 @@
     </button>
       <div class="rp-progress" id="resultsProgress">– / –</div>
     <button class="rp-nav-btn rp-nav-next" id="nextClinic" type="button">
-      <span lang-el="vi">Đề xuất tiếp theo</span>
-      <span lang-el="en">Next suggestion</span>
+      <span lang-el="vi">Tiếp theo</span>
+      <span lang-el="en">Next</span>
       <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
     </button>
   </div>

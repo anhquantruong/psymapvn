@@ -55,7 +55,6 @@
           <button class="nav-item" id="navDirectory" type="button">
             <span lang-el="vi">Danh mục cơ sở</span><span lang-el="en">Clinics directory</span>
           </button>
-        </div>
         <div class="nav-item-wrap" data-menu="help">
         <div class="nav-item-wrap" data-menu="help">
           <button class="nav-item" id="navHelp" type="button">
@@ -118,7 +117,7 @@
         <div class="mega-links">
           <div class="mega-col">
             <h4><span lang-el="vi">Bắt đầu</span><span lang-el="en">Get started</span></h4>
-            <a href="#" onclick="event.preventDefault(); openWizard();"><span lang-el="vi">Trò chuyện cùng Mây</span><span lang-el="en">Talk to Mây</span></a>
+            <a href="#" onclick="event.preventDefault(); openWizard();"><span lang-el="vi">Công cụ sàng lọc</span><span lang-el="en">Clinics searching tool!</span></a>
             <a href="#" onclick="event.preventDefault(); document.querySelector('.problem-section')?.scrollIntoView({behavior:'smooth'});"><span lang-el="vi">Vì sao điều này quan trọng</span><span lang-el="en">Why this matters</span></a>
             <a href="#" onclick="event.preventDefault(); document.querySelector('.journey-section')?.scrollIntoView({behavior:'smooth'});"><span lang-el="vi">Quy trình 3 bước</span><span lang-el="en">The 3-step process</span></a>
           </div>
@@ -130,7 +129,7 @@
         </div>
         <div class="mega-feature">
           <span class="mega-feature-eyebrow"><span lang-el="vi">Nổi bật</span><span lang-el="en">Featured</span></span>
-          <h4><span lang-el="vi">Sàng lọc cùng Mây</span><span lang-el="en">Screen with Mây</span></h4>
+          <h4><span lang-el="vi">Bắt đầu sàng lọc!</span><span lang-el="en">Start screening now!</span></h4>
           <p><span lang-el="vi">5 phút để tìm cơ sở tham vấn phù hợp nhất với bạn.</span><span lang-el="en">5 minutes to find the facility that fits you best.</span></p>
           <a href="#" onclick="event.preventDefault(); openWizard();"><span lang-el="vi">Bắt đầu ngay</span><span lang-el="en">Start now</span> <i class="fa-solid fa-arrow-right"></i></a>
         </div>
@@ -525,6 +524,290 @@
         </div>
       </div>
     </section>
+          </section>
+
+    <section class="faq-section" id="faqSection">
+      <div class="faq-inner">
+        <div class="section-eyebrow">
+          <span lang-el="vi">HỎI ĐÁP</span>
+          <span lang-el="en">Q&amp;A</span>
+        </div>
+        <h2 class="faq-heading">
+          <span lang-el="vi">Những câu hỏi bạn có thể đang tự hỏi.</span>
+          <span lang-el="en">Questions you might be asking yourself.</span>
+        </h2>
+
+        <div class="faq-list">
+
+          <div class="faq-card" data-faq="1">
+            <button class="faq-card-head" type="button" aria-expanded="false" aria-controls="faqBody1">
+              <span class="faq-tag faq-tag--warn"><span lang-el="vi">Nhận biết</span><span lang-el="en">Recognize</span></span>
+              <span class="faq-q">
+                <span lang-el="vi">Khi nào tôi nên đi thăm khám hoặc tìm kiếm sự hỗ trợ về sức khỏe tâm thần?</span>
+                <span lang-el="en">When should I see a doctor or seek mental health support?</span>
+              </span>
+              <span class="faq-plus" aria-hidden="true"></span>
+            </button>
+            <div class="faq-card-body" id="faqBody1">
+              <div class="faq-card-body-inner">
+                <p class="faq-lead">
+                  <span lang-el="vi">Theo UNICEF, khi bạn có các biểu hiện bất ổn về suy nghĩ, cảm xúc, hành vi, và tương tác xã hội sau trong hơn 2 tuần — đây là những dấu hiệu cần để tâm:</span>
+                  <span lang-el="en">According to UNICEF, when the following changes in thinking, emotion, behavior, or social interaction last more than 2 weeks — these are signs worth paying attention to:</span>
+                </p>
+
+                <ul class="faq-checklist">
+                  <li><span class="faq-checklist-num">01</span><span class="faq-checklist-text"><span lang-el="vi">Cảm thấy buồn rầu hoặc thu mình.</span><span lang-el="en">Feeling persistently sad or withdrawn.</span></span></li>
+                  <li><span class="faq-checklist-num">02</span><span class="faq-checklist-text"><span lang-el="vi">Có những cơn hoảng loạn không rõ nguyên nhân, thường kèm tim đập nhanh hoặc thở gấp, hụt hơi.</span><span lang-el="en">Panic attacks with no clear cause, often with a racing heart or shortness of breath.</span></span></li>
+                  <li><span class="faq-checklist-num">03</span><span class="faq-checklist-text"><span lang-el="vi">Lo lắng hoặc sợ hãi dữ dội gây ảnh hưởng đến các hoạt động hàng ngày.</span><span lang-el="en">Intense anxiety or fear that disrupts daily activities.</span></span></li>
+                  <li><span class="faq-checklist-num">04</span><span class="faq-checklist-text"><span lang-el="vi">Rất khó tập trung hoặc ngồi yên một chỗ.</span><span lang-el="en">Difficulty concentrating or sitting still.</span></span></li>
+                  <li><span class="faq-checklist-num">05</span><span class="faq-checklist-text"><span lang-el="vi">Tự làm hại bản thân hoặc có ý định tự làm hại, có nói đến việc tự tử.</span><span lang-el="en">Self-harming behavior or thoughts of self-harm, including talk of suicide.</span></span></li>
+                  <li><span class="faq-checklist-num">06</span><span class="faq-checklist-text"><span lang-el="vi">Tham gia ẩu đả, cố tình gây thương tích — hành vi có xu hướng gây nguy hại cho người khác.</span><span lang-el="en">Getting into fights or intentionally causing injury — behavior that risks harm to others.</span></span></li>
+                  <li><span class="faq-checklist-num">07</span><span class="faq-checklist-text"><span lang-el="vi">Hành vi ăn uống không lành mạnh: ăn quá nhiều, quá ít, hoặc tập thể dục quá sức để giảm cân.</span><span lang-el="en">Unhealthy eating patterns: overeating, undereating, or excessive exercise to lose weight.</span></span></li>
+                  <li><span class="faq-checklist-num">08</span><span class="faq-checklist-text"><span lang-el="vi">Sử dụng chất kích thích hoặc rượu bia.</span><span lang-el="en">Using stimulants, drugs, or alcohol.</span></span></li>
+                  <li><span class="faq-checklist-num">09</span><span class="faq-checklist-text"><span lang-el="vi">Thay đổi tâm trạng nghiêm trọng, ảnh hưởng đến mối quan hệ với gia đình và bạn bè.</span><span lang-el="en">Severe mood swings that seriously affect relationships with family and friends.</span></span></li>
+                </ul>
+
+                <p class="faq-subhead">
+                  <span lang-el="vi">Một cách để xác định các bất thường này là tiêu chuẩn <strong>4D</strong>:</span>
+                  <span lang-el="en">One way to assess these changes is the <strong>4D</strong> standard:</span>
+                </p>
+
+                <div class="faq-4d-grid">
+                  <div class="faq-4d-card" style="--dcolor:var(--coral)">
+                    <span class="faq-4d-tag">D</span>
+                    <h4><span lang-el="vi">Nguy hiểm (Dangerous)</span><span lang-el="en">Dangerous</span></h4>
+                    <p><span lang-el="vi">Gây nguy hiểm cho bản thân, người khác, hoặc môi trường xung quanh.</span><span lang-el="en">Puts oneself, others, or the surroundings at risk.</span></p>
+                    <span class="faq-4d-ex"><span lang-el="vi">VD: hành vi tự hại, tấn công, gây hại nghiêm trọng.</span><span lang-el="en">E.g. self-harm, aggression, serious harm.</span></span>
+                  </div>
+                  <div class="faq-4d-card" style="--dcolor:var(--teal)">
+                    <span class="faq-4d-tag">D</span>
+                    <h4><span lang-el="vi">Lệch lạc (Deviant)</span><span lang-el="en">Deviant</span></h4>
+                    <p><span lang-el="vi">Khác biệt rõ rệt so với các chuẩn mực văn hóa, xã hội thông thường.</span><span lang-el="en">Clearly departs from typical cultural or social norms.</span></p>
+                    <span class="faq-4d-ex"><span lang-el="vi">VD: hành vi hoặc cách ăn mặc không phù hợp gây nguy hại.</span><span lang-el="en">E.g. harmful conduct out of step with one's role.</span></span>
+                  </div>
+                  <div class="faq-4d-card" style="--dcolor:var(--plum)">
+                    <span class="faq-4d-tag">D</span>
+                    <h4><span lang-el="vi">Rối loạn chức năng (Dysfunctional)</span><span lang-el="en">Dysfunctional</span></h4>
+                    <p><span lang-el="vi">Cản trở công việc, học tập, mối quan hệ và trách nhiệm hàng ngày.</span><span lang-el="en">Disrupts work, study, relationships, and daily responsibilities.</span></p>
+                    <span class="faq-4d-ex"><span lang-el="vi">VD: không thể duy trì công việc hoặc tự chăm sóc bản thân.</span><span lang-el="en">E.g. unable to keep a job or care for oneself.</span></span>
+                  </div>
+                  <div class="faq-4d-card" style="--dcolor:var(--ink-soft)">
+                    <span class="faq-4d-tag">D</span>
+                    <h4><span lang-el="vi">Đau khổ (Distress)</span><span lang-el="en">Distress</span></h4>
+                    <p><span lang-el="vi">Gây đau khổ rõ rệt: lo lắng, buồn chán, bất an kéo dài.</span><span lang-el="en">Causes clear suffering: anxiety, sadness, persistent unease.</span></p>
+                    <span class="faq-4d-ex"><span lang-el="vi">VD: cảm giác vô vọng hoặc tuyệt vọng kéo dài.</span><span lang-el="en">E.g. prolonged hopelessness or despair.</span></span>
+                  </div>
+                </div>
+
+                <p class="faq-note">
+                  <span lang-el="vi">Nếu không được để tâm, những bất thường này có thể dần trở thành các rối loạn tâm thần — từ rối loạn khí sắc, lo âu lan tỏa, đến các vấn đề liên quan đến stress, ăn uống, sử dụng chất và nhiều bệnh lý mạn tính khác.</span>
+                  <span lang-el="en">Left unaddressed, these changes can develop into mental health disorders — from mood and anxiety disorders to stress, eating, and substance-related conditions, and other chronic illnesses.</span>
+                </p>
+
+                <p class="faq-crisis-note">
+                  <span lang-el="vi">Nếu bạn hoặc ai đó bạn biết đang gặp khủng hoảng, hãy tìm hỗ trợ khẩn cấp ngay — đừng chờ đợi.</span>
+                  <span lang-el="en">If you or someone you know is in crisis, seek urgent support right away — don't wait.</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-card" data-faq="2">
+            <button class="faq-card-head" type="button" aria-expanded="false" aria-controls="faqBody2">
+              <span class="faq-tag faq-tag--path"><span lang-el="vi">Định hướng</span><span lang-el="en">Direction</span></span>
+              <span class="faq-q">
+                <span lang-el="vi">Tôi nên gặp bác sĩ tâm thần trước hay nhà tâm lý trước?</span>
+                <span lang-el="en">Should I see a psychiatrist or a psychologist first?</span>
+              </span>
+              <span class="faq-plus" aria-hidden="true"></span>
+            </button>
+            <div class="faq-card-body" id="faqBody2">
+              <div class="faq-card-body-inner">
+                <p class="faq-lead">
+                  <span lang-el="vi">Hãy tự đánh giá tình trạng của bạn và lựa chọn theo gợi ý sau đây.</span>
+                  <span lang-el="en">Assess your own situation and choose based on the guidance below.</span>
+                </p>
+
+                <div class="faq-fork">
+                  <svg class="faq-fork-svg" viewBox="0 0 200 48" preserveAspectRatio="none" aria-hidden="true">
+                    <path d="M100,0 C100,18 38,18 38,36 L38,48" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+                    <path d="M100,0 C100,18 162,18 162,36 L162,48" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+                    <circle cx="100" cy="2" r="3.5" fill="var(--coral)"/>
+                  </svg>
+                  <div class="faq-fork-paths">
+                    <div class="faq-path-card">
+                      <span class="faq-path-label"><span lang-el="vi">Bác sĩ tâm thần trước, nếu bạn</span><span lang-el="en">See a psychiatrist first, if you</span></span>
+                      <ul>
+                        <li><span lang-el="vi">Muốn dùng thuốc để cải thiện tinh thần hiện tại — vd: mất ngủ kéo dài, mệt mỏi kéo dài, khó kiểm soát cảm xúc.</span><span lang-el="en">Want medication to help right now — e.g. prolonged insomnia, ongoing fatigue, trouble controlling emotions.</span></li>
+                        <li><span lang-el="vi">Đang có triệu chứng cản trở công việc, sinh hoạt thường ngày.</span><span lang-el="en">Have symptoms disrupting your work and daily life.</span></li>
+                      </ul>
+                    </div>
+                    <div class="faq-path-card">
+                      <span class="faq-path-label"><span lang-el="vi">Nhà tâm lý trước, nếu bạn</span><span lang-el="en">See a psychologist first, if you</span></span>
+                      <ul>
+                        <li><span lang-el="vi">Vẫn giữ được chức năng sống (sinh học – tâm lý – xã hội) nhưng chưa tìm được cách ứng phó lành mạnh.</span><span lang-el="en">Still function day-to-day but haven't found a healthy way to cope.</span></li>
+                        <li><span lang-el="vi">Muốn giải quyết các vấn đề về mối quan hệ (gia đình, xã hội).</span><span lang-el="en">Want to work through relationship issues (family, social).</span></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="faq-callout">
+                  <span class="faq-callout-mark">✓</span>
+                  <div>
+                    <h4><span lang-el="vi">Quan trọng nhất, là bạn hãy:</span><span lang-el="en">Most importantly:</span></h4>
+                    <ul>
+                      <li><span lang-el="vi">Ưu tiên cảm giác dễ chịu của bạn.</span><span lang-el="en">Prioritize what feels right to you.</span></li>
+                      <li><span lang-el="vi">Chọn người khiến bạn thấy thoải mái khi chia sẻ triệu chứng, bệnh sử, hoàn cảnh của mình.</span><span lang-el="en">Choose someone who makes you feel comfortable sharing your symptoms, history, and circumstances.</span></li>
+                      <li><span lang-el="vi">Ưu tiên chuyên gia làm việc theo ekip thay vì một mình, để được đồng hành toàn diện hơn.</span><span lang-el="en">Prefer a professional who works within a team, for more well-rounded support.</span></li>
+                    </ul>
+                  </div>
+                </div>
+                            </div>
+            </div>
+          </div>
+
+          <div class="faq-card" data-faq="3">
+            <button class="faq-card-head" type="button" aria-expanded="false" aria-controls="faqBody3">
+              <span class="faq-tag faq-tag--check"><span lang-el="vi">Tiêu chuẩn</span><span lang-el="en">Standard</span></span>
+              <span class="faq-q">
+                <span lang-el="vi">Trong bối cảnh nhiều chuyên gia tâm lý tự phong, có tiêu chuẩn nào để đánh giá nhà tâm lý và trung tâm tham vấn không?</span>
+                <span lang-el="en">With many self-proclaimed psychology experts out there, is there a standard for evaluating psychologists and counseling centers?</span>
+              </span>
+              <span class="faq-plus" aria-hidden="true"></span>
+            </button>
+            <div class="faq-card-body" id="faqBody3">
+              <div class="faq-card-body-inner">
+                <p class="faq-lead">
+                  <span lang-el="vi">Có 3 đặc điểm bạn có thể dựa vào để tự thực hiện đánh giá chung ban đầu trước khi lựa chọn một nhà tâm lý hoặc trung tâm tham vấn.</span>
+                  <span lang-el="en">There are 3 traits you can use to do an initial general assessment before choosing a psychologist or counseling center.</span>
+                </p>
+                <div class="faq-criteria">
+                  <div class="faq-criteria-head">
+                    <span class="faq-criteria-num">1</span>
+                    <h4><span lang-el="vi">Về chuyên môn</span><span lang-el="en">Professional qualifications</span></h4>
+                  </div>
+                  <p class="faq-criteria-intro">
+                    <span lang-el="vi">Bạn có quyền được biết bằng cấp &amp; quá trình đào tạo, chuyên môn, kinh nghiệm, trường phái và kỹ thuật của nhà tâm lý.</span>
+                    <span lang-el="en">You have the right to know a psychologist's qualifications &amp; training, expertise, experience, school of thought, and techniques.</span>
+                  </p>
+
+                  <div class="faq-role">
+                    <span class="faq-role-label"><span lang-el="vi">Nhà tâm lý</span><span lang-el="en">Psychologist</span></span>
+                    <ul>
+                      <li><span lang-el="vi">Ở Việt Nam: tốt nghiệp Cử nhân Tâm lý (trở lên).</span><span lang-el="en">In Vietnam: Bachelor's degree in Psychology or higher.</span></li>
+                      <li><span lang-el="vi">Quốc tế: tốt nghiệp Thạc sĩ Tâm lý trở lên và có chứng chỉ hành nghề ở nước ngoài.</span><span lang-el="en">International: Master's degree in Psychology or higher, with a license to practice abroad.</span></li>
+                      <li><span lang-el="vi">Thực hành có giám sát chuyên môn (Hiệp hội Tâm lý Hoa Kỳ, APA-2017).</span><span lang-el="en">Supervised clinical practice (American Psychological Association, APA-2017).</span></li>
+                    </ul>
+                  </div>
+
+                  <p class="faq-criteria-note">
+                    <span lang-el="vi">Đối với nhà tâm lý, năng lực chuyên môn và học tập liên tục cũng cần được đảm bảo:</span>
+                    <span lang-el="en">For psychologists, ongoing competence and continuing education should also be ensured:</span>
+                  </p>
+                  <ul class="faq-plain-list">
+                    <li><span lang-el="vi">Thực hành dựa trên nền tảng giáo dục, đào tạo, kinh nghiệm giám sát và chuyên môn (APA-2010).</span><span lang-el="en">Practice grounded in education, training, supervised experience, and expertise (APA-2010).</span></li>
+                    <li><span lang-el="vi">Tham gia phát triển chuyên môn và đào tạo liên tục để cập nhật kiến thức, kỹ thuật, phương pháp.</span><span lang-el="en">Ongoing professional development and training to keep knowledge, techniques, and methods current.</span></li>
+                    <li><span lang-el="vi">Trung tâm tham vấn: cơ quan quản lý công bố Hồ sơ đăng ký kinh doanh của cơ sở đủ điều kiện, hoạt động theo đúng phạm vi chuyên môn đã đăng ký.</span><span lang-el="en">Counseling centers: the regulatory authority publishes the business registration confirming the facility is qualified to operate within its registered scope.</span></li>
+                  </ul>
+                </div>
+
+                <div class="faq-criteria">
+                  <div class="faq-criteria-head">
+                    <span class="faq-criteria-num">2</span>
+                    <h4><span lang-el="vi">Về nguyên tắc thực hành nghề nghiệp</span><span lang-el="en">Professional practice principles</span></h4>
+                  </div>
+                  <p class="faq-criteria-intro">
+                    <span lang-el="vi">Theo Hiệp hội Tâm lý Hoa Kỳ (APA): tôn trọng quyền và nhân phẩm của thân chủ, làm lợi và không gây hại, công bằng, liêm chính, trung thực và trách nhiệm.</span>
+                    <span lang-el="en">American Psychological Association (APA): respect for clients' rights and dignity, beneficence and non-maleficence, justice, integrity, honesty, and responsibility.</span>
+                  </p>
+                  <p class="faq-criteria-intro">
+                    <span lang-el="vi">Theo Hiệp hội Tham vấn Hoa Kỳ (ACA): tôn trọng sự tự quyết, vì lợi ích thân chủ, không gây hại, công bằng, trung thực và chân thật.</span>
+                    <span lang-el="en">American Counseling Association (ACA): respect for autonomy, beneficence, non-maleficence, justice, fidelity, and truthfulness.</span>
+                  </p>
+                  <p class="faq-criteria-note">
+                    <span lang-el="vi">Gợi ý vài đặc điểm do một số nhà tâm lý đang thực hành tại Việt Nam đề xuất, bạn có thể tham khảo:</span>
+                    <span lang-el="en">A few traits suggested by psychologists currently practicing in Vietnam, worth considering:</span>
+                  </p>
+
+                  <div class="faq-role">
+                    <span class="faq-role-label"><span lang-el="vi">Nhà tâm lý</span><span lang-el="en">Psychologist</span></span>
+                    <ul>
+                      <li><span lang-el="vi">Là thành viên của một (hay nhiều) Hiệp hội Tâm lý trong và ngoài nước.</span><span lang-el="en">Member of one or more Psychology Associations, local or international.</span></li>
+                      <li><span lang-el="vi">Tuân theo Bộ Tiêu chuẩn Hành nghề của Hiệp hội.</span><span lang-el="en">Follows the Association's Code of Practice.</span>
+                        <ul>
+                          <li><span lang-el="vi">Bảo mật trong tham vấn.</span><span lang-el="en">Confidentiality in counseling.</span></li>
+                          <li><span lang-el="vi">Chấp nhận vô điều kiện: cả điểm mạnh và điểm yếu.</span><span lang-el="en">Unconditional acceptance — both strengths and weaknesses.</span></li>
+                          <li><span lang-el="vi">Thân chủ là trọng tâm: bạn là người quyết định tiến trình tham vấn – trị liệu.</span><span lang-el="en">Client-centered: you decide the pace of the counseling/therapy process.</span></li>
+                          <li><span lang-el="vi">Tôn trọng và tin tưởng khả năng tự quyết của bạn.</span><span lang-el="en">Respects and trusts your ability to decide for yourself.</span></li>
+                          <li><span lang-el="vi">Không có mối quan hệ ngoài chuyên môn giữa nhà tâm lý – thân chủ.</span><span lang-el="en">No relationship outside the professional one between psychologist and client.</span></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="faq-role">
+                    <span class="faq-role-label"><span lang-el="vi">Trung tâm tham vấn</span><span lang-el="en">Counseling center</span></span>
+                    <ul>
+                      <li><span lang-el="vi">Thông tin rõ ràng về các dịch vụ cung cấp, cách thức liên lạc.</span><span lang-el="en">Clear information on services offered and how to get in touch.</span></li>
+                      <li><span lang-el="vi">Có người quản lý hồ sơ của bạn (case management):</span><span lang-el="en">Has someone managing your case file (case management):</span>
+                        <ul>
+                          <li><span lang-el="vi">Lấy bạn làm trung tâm, cùng hợp tác để đạt mục tiêu bạn mong muốn.</span><span lang-el="en">Client-centered, collaborating toward the outcomes you want.</span></li>
+                          <li><span lang-el="vi">Tôn trọng quyền tự quyết, giá trị và bối cảnh văn hóa của bạn.</span><span lang-el="en">Respects your autonomy, values, and cultural context.</span></li>
+                        </ul>
+                      </li>
+                      <li><span lang-el="vi">Có biện pháp bảo mật dữ liệu để bảo vệ hồ sơ của bạn.</span><span lang-el="en">Has data-security measures to protect your records.</span></li>
+                    </ul>
+                  </div>
+
+                  <p class="faq-criteria-note">
+                    <span lang-el="vi">Cả nhà tâm lý và trung tâm tham vấn đều bảo vệ phúc lợi của bạn: bạn có quyền biết danh tính, bằng cấp chuyên môn, kinh nghiệm làm việc của họ và quyền lựa chọn người trợ giúp cho mình.</span>
+                    <span lang-el="en">Both psychologists and counseling centers protect your welfare: you have the right to know their identity, qualifications, and experience — and the right to choose who helps you.</span>
+                  </p>
+                </div>
+                <div class="faq-criteria">
+                  <div class="faq-criteria-head">
+                    <span class="faq-criteria-num">3</span>
+                    <h4><span lang-el="vi">Về cơ sở vật chất và nguồn lực</span><span lang-el="en">Facilities &amp; resources</span></h4>
+                  </div>
+
+                  <div class="faq-role">
+                    <span class="faq-role-label"><span lang-el="vi">Nhà tâm lý</span><span lang-el="en">Psychologist</span></span>
+                    <ul>
+                      <li><span lang-el="vi">Bạn có quyền được biết cách nhà tâm lý lưu trữ thông tin hay ghi âm.</span><span lang-el="en">You have the right to know how the psychologist stores information or recordings.</span></li>
+                    </ul>
+                  </div>
+
+                  <div class="faq-role">
+                    <span class="faq-role-label"><span lang-el="vi">Trung tâm tham vấn</span><span lang-el="en">Counseling center</span></span>
+                    <ul>
+                      <li><span lang-el="vi">Cung cấp môi trường an toàn, thoải mái và riêng tư cho các buổi tham vấn cá nhân, cặp đôi và nhóm.</span><span lang-el="en">Provides a safe, comfortable, private setting for individual, couple, and group sessions.</span></li>
+                      <li><span lang-el="vi">Bạn có quyền truy cập các nguồn lực phù hợp như tài liệu tham khảo và mạng lưới giới thiệu hỗ trợ dịch vụ.</span><span lang-el="en">You have access to suitable resources such as reference materials and referral networks.</span></li>
+                    </ul>
+                  </div>
+
+                  <p class="faq-criteria-note">
+                    <span lang-el="vi">Cả nhà tâm lý và trung tâm tham vấn đều đánh giá và đảm bảo chất lượng:</span>
+                    <span lang-el="en">Both psychologists and counseling centers assess and ensure quality:</span>
+                  </p>
+                  <ul class="faq-plain-list">
+                    <li><span lang-el="vi">Có quy trình đánh giá hiệu quả và sự hài lòng của bạn với dịch vụ chăm sóc sức khỏe tinh thần bạn sử dụng.</span><span lang-el="en">Have processes to assess the effectiveness of, and your satisfaction with, the mental health care you receive.</span></li>
+                    <li><span lang-el="vi">Các đánh giá này được dùng để cải thiện liên tục, duy trì và nâng cao chất lượng dịch vụ.</span><span lang-el="en">These assessments are used to continuously improve and raise the quality of the service.</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+                </div>
+
+        <p class="faq-source">
+          <span lang-el="vi">Nguồn: Sở Y tế TP. Hồ Chí Minh</span>
+          <span lang-el="en">Source: Ho Chi Minh City Department of Health</span>
+        </p>
+      </div>
+    </section>
+
     <section class="testimonial-section">
       <div class="journey-inner">
         <span><br><br>

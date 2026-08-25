@@ -1153,11 +1153,6 @@ app.post(
   }
 );
 
-
-// =========================================================
-// REPLY TO FEEDBACK — ADMIN
-// =========================================================
-
 app.post(
   "/api/admin/feedback/:id/reply",
   async (req, res) => {
@@ -1387,6 +1382,77 @@ app.delete(
   }
 );
 
+app.get(
+  "/api/geocode",
+  async (req, res) => {
+
+    try {
+
+      const query = req.query.q;
+
+      if (!query || typeof query !== "string") {
+
+        return res.status(400).json({
+          error: "Missing q."
+        });
+
+      }
+
+      const url = new URL(
+        "https://nominatim.openstreetmap.org/search"
+      );
+
+      url.searchParams.set("format", "jsonv2");
+      url.searchParams.set("limit", "1");
+      url.searchParams.set("q", query);
+
+      const response = await fetch(url, {
+        headers: {
+          "User-Agent": "PsyMapVN/1.0 (psymapvn@gmail.com)",
+          "Accept-Language": "vi"
+        }
+      });
+
+      if (!response.ok) {
+
+        console.error(
+          `Nominatim returned HTTP ${response.status}`
+        );
+
+        return res.status(response.status).json({
+          error: `Nominatim HTTP ${response.status}`
+        });
+
+      }
+
+      const data = await response.json();
+
+      if (!Array.isArray(data) || data.length === 0) {
+
+        return res.json(null);
+
+      }
+
+      return res.json({
+        lat: parseFloat(data[0].lat),
+        lng: parseFloat(data[0].lon)
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Nominatim geocoding error:",
+        error
+      );
+
+      return res.status(500).json({
+        error: "Geocoding failed."
+      });
+
+    }
+
+  }
+);
 
 // =========================================================
 // PUBLIC — GET ALL CLINICS
@@ -1428,8 +1494,9 @@ app.listen(
   () => {
 
     console.log(
-      `MappingSiteVN running at http://localhost:${PORT}`
+      `PsyMapVN running at http://localhost:${PORT}`
     );
 
   }
 );
+
