@@ -2916,9 +2916,76 @@ padding: 20px 24px 24px;
   transform: translateY(-1px);
 }
 
-.service-filter-list { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
-  .service-filter-item { display:flex; align-items:center; gap:8px; font-size:14px; cursor:pointer; }
-  .service-filter-actions { display:flex; justify-content:space-between; gap:8px; border-top:1px solid var(--border-strong, #eee); padding-top:8px; }
-  .service-filter-actions button { flex:1; padding:6px 10px; border-radius:8px; border:1px solid var(--border-strong,#ddd); background:transparent; cursor:pointer; }
-  #serviceFilterApply { background:var(--teal, #2b8a7f); color:#fff; border-color:transparent; }
-  .rc-chip.matched { background:var(--teal, #2b8a7f); color:#fff; }
+.rp-trailbar{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: flex-start;   /* rule gốc để space-between -> gây lệch, override hẳn */
+  gap: 18px 28px;
+  padding: 16px 4px 18px;
+  border-bottom: 1px solid var(--rp-line);
+  margin-bottom: 18px;
+}
+ 
+.rp-trail-field{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;          /* rule gốc để center -> label/select bị co giữa, override hẳn */
+  gap: 6px;
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+ 
+.rp-trail-field label{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;           /* fix chính: "Distance"/"Dịch vụ" không xuống dòng nữa */
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  line-height: 1.2;
+}
+.rp-trail-field label i{ color: var(--teal); }
+ 
+/* Áp dụng cho CẢ <select> lẫn <button id="serviceFilterBtn"> để chúng
+   cùng cao/rộng/bo góc — khai báo lại toàn bộ, không phụ thuộc rule cũ */
+.rp-trail-field select,
+.rp-trail-field button.select-input{
+  font: inherit;
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--rp-line);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+  appearance: none;
+}
+.rp-trail-field select:disabled{ opacity: 0.55; cursor: not-allowed; }
+ 
+.rp-trail-count{
+  flex: 0 0 auto;
+  margin-left: auto;
+  align-self: center;
+  white-space: nowrap;
+  font-family:'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--plum);
+  background: color-mix(in srgb, var(--plum) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--plum) 30%, transparent);
+  padding: 10px 16px;
+  border-radius: 999px;
+}
+ 
+@media (max-width: 720px){
+  .rp-trailbar{ align-items: stretch; }
+  .rp-trail-field{ flex: 1 1 100%; }
+  .rp-trail-count{ margin-left: 0; flex: 1 1 100%; text-align: center; }
+}

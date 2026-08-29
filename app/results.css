@@ -730,3 +730,78 @@
   }
   .header-cta i{ font-size: 0.78rem; }
   .header-cta:hover{ background: var(--plum); color: #fff; border-color: var(--plum); }
+
+.rp-trailbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;   /* các select/button đáy thẳng hàng nhau */
+  gap: 18px 28px;
+  padding: 16px 0;
+}
+
+.rp-trail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 200px;   /* 3 field co giãn đều nhau, không field nào bị hẹp/rộng bất thường */
+  min-width: 180px;
+}
+
+.rp-trail-field label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;       /* <-- fix chính: "Distance"/"Dịch vụ" không còn xuống dòng */
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft, #6b6b6b);
+  line-height: 1.2;
+}
+
+/* Áp dụng chung cho <select> và <button> đóng vai trò filter control,
+   để chúng cao/rộng/bo góc giống hệt nhau, thẳng hàng ngang nhau */
+.rp-trail-field select.select-input,
+.rp-trail-field button.select-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong, #ddd);
+  background: #fff;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+  appearance: none;         /* đồng bộ mũi tên dropdown giữa các trình duyệt */
+}
+
+.rp-trail-field button.select-input {
+  font-family: inherit;     /* button mặc định không kế thừa font như select */
+}
+
+.rp-trail-count {
+  flex: 0 0 auto;
+  margin-left: auto;        /* đẩy sang phải trên màn rộng */
+  white-space: nowrap;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong, #ddd);
+  font-size: 14px;
+  align-self: center;
+}
+
+/* Trên màn hẹp: filter xuống dòng theo hàng, count cũng full-width thay vì
+   bị đẩy lệch một góc */
+@media (max-width: 720px) {
+  .rp-trailbar {
+    align-items: stretch;
+  }
+  .rp-trail-field {
+    flex: 1 1 100%;
+  }
+  .rp-trail-count {
+    margin-left: 0;
+    flex: 1 1 100%;
+    text-align: center;
+  }
+}

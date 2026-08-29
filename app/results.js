@@ -1,16 +1,11 @@
 (function () {
   'use strict';
-
-  // =========================================================
-  // CONSTANTS
-  // =========================================================
-
   const STORAGE_KEY = 'mappingWizardResult';
   const CLINICS_API = '/api/clinics';
   const FORCE_MOCK = false;
 
-  const NEAREST_RADIUS_KM = 5;       // dùng cho filter địa lý "Gần nhất"
-  const WARD_FALLBACK_RADIUS_KM = 3; // dùng khi không suy ra được phường (GPS + reverse-geocode thất bại)
+  const NEAREST_RADIUS_KM = 5;  
+  const WARD_FALLBACK_RADIUS_KM = 3; 
 
   const FALLBACK_CENTER = { lat: 10.7769, lng: 106.7009 };
   const PROVINCE_FALLBACK_CENTERS = {
@@ -23,11 +18,28 @@
     return match ? PROVINCE_FALLBACK_CENTERS[match] : FALLBACK_CENTER;
   }
 
-  // ---------------------------------------------------------
-  // Danh sách 18 dịch vụ — dùng cho:
-  //   (a) filter "Dịch vụ" ở trang kết quả (so khớp cột `service`, tách bởi ";")
-  //   (b) so khớp mờ (fallback) trên description/target_groups khi `service` trống
-  // ---------------------------------------------------------
+  const REQUIRED_STRING_FIELDS = [
+    'phone',
+    'website',
+    'ggmaps_link',
+    'ward',
+    'prov',
+    'address',
+    'psychiatris_or_psychologist',
+  ];
+
+  function hasRequiredFields(clinic) {
+    for (const key of REQUIRED_STRING_FIELDS) {
+      const v = clinic[key];
+      if (v == null || String(v).trim() === '') return false;
+    }
+    const lat = clinic.latitude;
+    const lng = clinic.longitude;
+    if (lat == null || lat === '' || Number.isNaN(Number(lat))) return false;
+    if (lng == null || lng === '' || Number.isNaN(Number(lng))) return false;
+    return true;
+  }
+
   const SERVICE_OPTIONS = [
     { vi: 'Lo âu', en: 'Anxiety', kw: ['lo âu', 'anxiety'] },
     { vi: 'Trầm cảm', en: 'Depression', kw: ['trầm cảm', 'depression'] },
@@ -49,15 +61,22 @@
     { vi: 'Khác', en: 'Other', kw: [] },
   ];
 
-  // q1a (mối quan hệ với người cần tham vấn) -> dịch vụ liên quan, dùng để BOOST thứ tự
-  // sắp xếp (soft match), không phải hard filter.
+  const SUPPORT_GROUP_OPTIONS = [
+    { vi: 'Nhân viên Y tế', en: 'Healthcare workers' },
+    { vi: 'Người bệnh mạn tính', en: 'People with chronic illness' },
+    { vi: 'Người có H', en: 'People living with HIV' },
+    { vi: 'Cộng đồng LGBTQ+', en: 'LGBTQ+ community' },
+    { vi: 'Nạn nhân buôn bán người', en: 'Human trafficking survivors' },
+    { vi: 'Nạn nhân của bạo lực', en: 'Survivors of violence' },
+  ];
+
   const RELATIONSHIP_SERVICE_MAP = {
-    0: ['Quan hệ gia đình', 'Nuôi dạy con'], // Cha mẹ
-    1: ['Hôn nhân'],                          // Vợ/Chồng
-    2: ['Quan hệ tình cảm'],                  // Cặp đôi
-    3: ['Nuôi dạy con', 'Quan hệ gia đình'],  // Con cái
-    4: ['Quan hệ gia đình'],                  // Người thân
-    5: [],                                    // Others
+    0: ['Quan hệ gia đình', 'Nuôi dạy con'], 
+    1: ['Hôn nhân'],                          
+    2: ['Quan hệ tình cảm'],                 
+    3: ['Nuôi dạy con', 'Quan hệ gia đình'],  
+    4: ['Quan hệ gia đình'],                  
+    5: [],                                    
   };
 
   const GEO_OPTIONS = [
@@ -73,16 +92,19 @@
     { key: 'psychologist', vi: 'Không sử dụng thuốc', en: 'Without medication' },
   ];
 
-  // =========================================================
-  // STATE
-  // =========================================================
+  const TYPE_OPTIONS = [
+    { key: '', vi: 'Tất cả loại hình', en: 'All types' },
+    { key: 'public', vi: 'Công lập', en: 'Public' },
+    { key: 'private', vi: 'Tư nhân', en: 'Private' },
+    { key: 'community', vi: 'Tổ chức cộng đồng', en: 'Community org.' },
+  ];
 
   const state = {
     lang: 'vi',
     answers: null,
     location: null,
     refPoint: null,
-    userWard: null,       // suy ra từ answer thủ công hoặc reverse-geocode GPS
+    userWard: null,
     userProvince: null,
     clinics: [],
     matches: [],
@@ -91,17 +113,14 @@
     markers: {},
     usingMock: false,
     filters: {
-      geo: 'nearest',      // 'nearest' | 'ward' | 'province' | 'any'
-      services: [],        // mảng nhãn tiếng Việt đã chọn, vd ['Lo âu','Hôn nhân']
-      treatment: '',        // '' | 'psychiatrist' | 'psychologist'
+      geo: 'nearest',
+      services: [],
+      treatment: '',
+      type: '',
     },
   };
 
   const $ = (id) => document.getElementById(id);
-
-  // =========================================================
-  // LOAD WIZARD DATA
-  // =========================================================
 
   function loadWizardData() {
     let raw;
@@ -132,10 +151,6 @@
       else window.location.href = 'index.html';
     }, 2500);
   }
-
-  // =========================================================
-  // REFERENCE POINT (GPS or manual ward/province) + REVERSE GEOCODE
-  // =========================================================
 
   function getReferencePoint() {
     return new Promise((resolve) => {
@@ -204,10 +219,6 @@
     return { ...fallbackForProvince(provinceVi), source: 'fallback' };
   }
 
-  // Suy ra Phường/Tỉnh-thành của người dùng để phục vụ filter "Trong phường" / "Trong tỉnh/thành".
-  // - Nếu người dùng chọn tay Tỉnh/Phường ở wizard -> dùng thẳng.
-  // - Nếu người dùng dùng GPS -> reverse-geocode qua Nominatim (không đảm bảo khớp 100% với
-  //   cách đặt tên trong database, nên các nơi gọi tới userWard/userProvince đều có fallback).
   async function resolveUserLocationLabels() {
     if (state.location && state.location.type === 'manual') {
       state.userWard = state.location.wardVi || null;
@@ -231,10 +242,6 @@
       console.warn('Reverse geocode thất bại — sẽ dùng bán kính gần thay thế:', e);
     }
   }
-
-  // =========================================================
-  // LOAD CLINICS
-  // =========================================================
 
   async function loadClinics() {
     if (FORCE_MOCK) {
@@ -296,17 +303,6 @@
       .filter(Boolean);
   }
 
-  // =========================================================
-  // MATCHING — chỉ dùng 4 câu trả lời thật có trong question.js: q1, q1a, q2, q3
-  //
-  //   q1  (bản thân / người thân)      -> chỉ dùng để biết có đọc q1a hay không
-  //   q1a (mối quan hệ, khi q1 === 1)  -> gợi ý dịch vụ liên quan (soft boost, KHÔNG lọc cứng)
-  //   q2  (tuổi, số)                   -> so khớp trực tiếp với clinic.min_age / max_age
-  //   q3  (giới tính)                  -> hiện KHÔNG có cột dữ liệu tương ứng trong `clinics`,
-  //                                        nên chưa dùng để lọc/sắp xếp. Giữ lại trong answers
-  //                                        phòng khi sau này có nhu cầu bổ sung cột giới tính.
-  // =========================================================
-
   function ageMatches(clinic, age) {
     if (age == null || Number.isNaN(age)) return null; // không có tuổi -> trung lập
     const min = clinic.min_age != null && clinic.min_age !== '' ? Number(clinic.min_age) : null;
@@ -334,14 +330,18 @@
       );
     });
 
+    const selectedGroupLabels = Array.isArray(a.q5)
+      ? a.q5.map((i) => SUPPORT_GROUP_OPTIONS[i]?.vi).filter(Boolean)
+      : [];
+    const clinicTargetGroups = splitServices(clinic.target_groups);
+    const groupMatch = selectedGroupLabels.filter((label) =>
+      clinicTargetGroups.some((tg) => tg.toLowerCase() === label.toLowerCase())
+    );
+
     const verified = !!(clinic.license_number && String(clinic.license_number).trim());
 
-    return { ageOk, relationshipMatch, verified, clinicServices };
+    return { ageOk, relationshipMatch, groupMatch, verified, clinicServices, clinicTargetGroups };
   }
-
-  // =========================================================
-  // EXPLANATION TEXT
-  // =========================================================
 
   function buildExplanation(clinic, m, distanceKm) {
     const vi = state.lang === 'vi';
@@ -371,6 +371,15 @@
       );
     }
 
+    if (m.groupMatch.length) {
+      const names = m.groupMatch.map((s) => s.toLowerCase()).join(', ');
+      parts.push(
+        vi
+          ? `hỗ trợ nhóm đối tượng bạn thuộc về: ${names}`
+          : `supports the group you belong to: ${names}`
+      );
+    }
+
     const selectedServices = state.filters.services;
     if (selectedServices.length) {
       const overlap = m.clinicServices.filter((cs) =>
@@ -389,8 +398,8 @@
       const wantsMed = state.filters.treatment === 'psychiatrist';
       parts.push(
         vi
-          ? (wantsMed ? `có bác sĩ tâm thần (có thể kê thuốc)` : `có nhà tâm lý (không dùng thuốc)`)
-          : (wantsMed ? `has a psychiatrist (can prescribe medication)` : `has a psychologist (non-medication)`)
+          ? (wantsMed ? `có Khoa Tâm thần (có thể kê thuốc)` : `có dịch vụ Tâm lý lâm sàng (chữa trị không dùng thuốc)`)
+          : (wantsMed ? `has psychiatrist (can prescribe medication)` : `provides clinical psychology servives  (non-medication)`)
       );
     }
 
@@ -404,39 +413,35 @@
     return sentence.charAt(0).toUpperCase() + sentence.slice(1);
   }
 
-  // =========================================================
-  // FILTERING + SORTING
-  // =========================================================
-
   function computeMatches() {
-    const evaluated = state.clinics.map((c) => {
+
+    const eligibleClinics = state.clinics.filter(hasRequiredFields);
+
+    const evaluated = eligibleClinics.map((c) => {
       const d = state.refPoint ? haversineKm(state.refPoint, c) : null;
       const e = evaluateClinic(c);
       return { clinic: c, distanceKm: d, ...e };
     });
 
-    // --- filter địa lý ---
     const geoFiltered = evaluated.filter((m) => {
       switch (state.filters.geo) {
         case 'nearest':
           return m.distanceKm == null || m.distanceKm <= NEAREST_RADIUS_KM;
         case 'ward':
           if (state.userWard) return m.clinic.ward === state.userWard;
-          // Không suy ra được phường (thường do GPS + reverse-geocode không khớp tên) -> nới thành bán kính gần
           return m.distanceKm == null || m.distanceKm <= WARD_FALLBACK_RADIUS_KM;
         case 'province':
           if (state.userProvince) {
             const prov = (m.clinic.prov || '');
             return prov.includes(state.userProvince) || state.userProvince.includes(prov);
           }
-          return true; // không suy ra được tỉnh -> không lọc bỏ oan
+          return true;
         case 'any':
         default:
           return true;
       }
     });
 
-    // --- filter dịch vụ (khớp ÍT NHẤT MỘT dịch vụ đã chọn) ---
     const serviceFiltered = state.filters.services.length
       ? geoFiltered.filter((m) =>
           m.clinicServices.some((cs) =>
@@ -445,7 +450,6 @@
         )
       : geoFiltered;
 
-    // --- filter hình thức khám (thuốc / không thuốc) ---
     const treatmentFiltered = state.filters.treatment
       ? serviceFiltered.filter((m) => {
           const val = (m.clinic.psychiatris_or_psychologist || '').toLowerCase();
@@ -453,7 +457,11 @@
         })
       : serviceFiltered;
 
-    treatmentFiltered.sort((a, b) => {
+    const typeFiltered = state.filters.type
+      ? treatmentFiltered.filter((m) => normType(m.clinic.clinic_type) === state.filters.type)
+      : treatmentFiltered;
+
+    typeFiltered.sort((a, b) => {
       const ageA = a.ageOk ? 1 : 0;
       const ageB = b.ageOk ? 1 : 0;
       if (ageB !== ageA) return ageB - ageA;
@@ -461,6 +469,10 @@
       const relA = a.relationshipMatch.length;
       const relB = b.relationshipMatch.length;
       if (relB !== relA) return relB - relA;
+
+      const grpA = a.groupMatch.length;
+      const grpB = b.groupMatch.length;
+      if (grpB !== grpA) return grpB - grpA;
 
       const verA = a.verified ? 1 : 0;
       const verB = b.verified ? 1 : 0;
@@ -471,13 +483,9 @@
       return da - db;
     });
 
-    state.matches = treatmentFiltered;
+    state.matches = typeFiltered;
     state.currentIndex = 0;
   }
-
-  // =========================================================
-  // RENDER — HEADER
-  // =========================================================
 
   function geoLabel() {
     const opt = GEO_OPTIONS.find((o) => o.key === state.filters.geo);
@@ -502,10 +510,6 @@
     const banner = $('mockBanner');
     if (banner) banner.classList.toggle('hidden', !state.usingMock);
   }
-
-  // =========================================================
-  // RENDER — CARD
-  // =========================================================
 
   function renderCard() {
     const loading = $('resultsLoading');
@@ -561,14 +565,12 @@
 
     $('rcDesc').textContent = c.description || '';
 
-    // Chips: hiển thị các dịch vụ thật sự của cơ sở (cột service), tô đậm những dịch vụ
-    // trùng với filter đang chọn hoặc trùng với gợi ý theo mối quan hệ (q1a).
     const chipsWrap = $('rcTargetGroups');
     chipsWrap.innerHTML = '';
     const highlightSet = new Set(
-      [...state.filters.services, ...m.relationshipMatch].map((s) => s.toLowerCase())
+      [...state.filters.services, ...m.relationshipMatch, ...m.groupMatch].map((s) => s.toLowerCase())
     );
-    const chipLabels = m.clinicServices.length ? m.clinicServices : splitServices(c.target_groups);
+    const chipLabels = [...new Set([...m.clinicServices, ...m.clinicTargetGroups])];
     chipLabels.forEach((label) => {
       const chip = document.createElement('span');
       chip.className = 'rc-chip';
@@ -591,10 +593,6 @@
 
     highlightMarker(c.id);
   }
-
-  // =========================================================
-  // MAP
-  // =========================================================
 
   const MAPTILER_KEY = '4ryegTLnvRGlcrr8Phnu';
 
@@ -735,17 +733,19 @@
     renderMarkers();
   }
 
-  // =========================================================
-  // FILTER UI — địa lý / dịch vụ / hình thức khám
-  // Yêu cầu các phần tử sau có trong HTML (xem hướng dẫn kèm theo):
-  //   #geoFilterSelect, #serviceFilterBtn, #serviceFilterPanel, #treatmentFilterSelect
-  // =========================================================
-
   function renderGeoOptions() {
     const sel = $('geoFilterSelect');
     if (!sel) return;
     const vi = state.lang === 'vi';
-    sel.innerHTML = GEO_OPTIONS.map(
+
+    const isManualLocation = state.location && state.location.type === 'manual';
+    const visibleOptions = GEO_OPTIONS.filter((o) => o.key !== 'ward' || isManualLocation);
+
+    if (!visibleOptions.some((o) => o.key === state.filters.geo)) {
+      state.filters.geo = 'nearest';
+    }
+
+    sel.innerHTML = visibleOptions.map(
       (o) => `<option value="${o.key}" ${o.key === state.filters.geo ? 'selected' : ''}>${vi ? o.vi : o.en}</option>`
     ).join('');
   }
@@ -756,6 +756,15 @@
     const vi = state.lang === 'vi';
     sel.innerHTML = TREATMENT_OPTIONS.map(
       (o) => `<option value="${o.key}" ${o.key === state.filters.treatment ? 'selected' : ''}>${vi ? o.vi : o.en}</option>`
+    ).join('');
+  }
+
+  function renderTypeOptions() {
+    const sel = $('typeFilterSelect');
+    if (!sel) return;
+    const vi = state.lang === 'vi';
+    sel.innerHTML = TYPE_OPTIONS.map(
+      (o) => `<option value="${o.key}" ${o.key === state.filters.type ? 'selected' : ''}>${vi ? o.vi : o.en}</option>`
     ).join('');
   }
 
@@ -834,6 +843,14 @@
       });
     }
 
+    const typeSel = $('typeFilterSelect');
+    if (typeSel) {
+      typeSel.addEventListener('change', () => {
+        state.filters.type = typeSel.value;
+        refreshAll();
+      });
+    }
+
     const serviceBtn = $('serviceFilterBtn');
     const servicePanel = $('serviceFilterPanel');
     if (serviceBtn && servicePanel) {
@@ -852,14 +869,11 @@
   function setupFilterUI() {
     renderGeoOptions();
     renderTreatmentOptions();
+    renderTypeOptions();
     renderServicePanel();
     updateServiceFilterBtnLabel();
     bindFilterEvents();
   }
-
-  // =========================================================
-  // LANGUAGE
-  // =========================================================
 
   function setLang(lang) {
     state.lang = lang;
@@ -868,15 +882,12 @@
     $('enBtn').classList.toggle('active', lang === 'en');
     renderGeoOptions();
     renderTreatmentOptions();
+    renderTypeOptions();
     renderServicePanel();
     updateServiceFilterBtnLabel();
     renderHeader();
     if (state.matches.length) renderCard();
   }
-
-  // =========================================================
-  // INIT
-  // =========================================================
 
   let bound = false;
 
@@ -906,9 +917,8 @@
 
     await resolveUserLocationLabels();
 
-    refreshAll();
     initMap();
-    renderMarkers();
+    refreshAll();
 
     setTimeout(() => {
       if (state.map) state.map.invalidateSize();

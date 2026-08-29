@@ -88,5 +88,16 @@ const LOCATIONS_API = 'https://provinces.open-api.vn/api/v2/?depth=2';
       showIf:a => a.q4perm === 1 || a.q4geoDenied === true,
       q:{vi:'Bạn đang sinh sống tại địa phương nào?', en:'Where do you currently live now?'},
       hint:{vi:'Chọn Tỉnh/Thành trước, sau đó chọn Phường.', en:'Select a Province/City first, then a Ward.'}},
-    { key:'done', type:'done' },
+    { key:'q5', type:'multi', required:false, grid:true,
+  q:{vi:'Bạn có thuộc nhóm hỗ trợ nào sau đây không?', en:'Do you belong to any of the following support groups?'},
+  hint:{vi:'Không bắt buộc trả lời. Có thể chọn nhiều đáp án.', en:'Optional. You can select more than one.'},
+  options:[
+    {vi:'Nhân viên Y tế', en:'Healthcare workers'},
+    {vi:'Người bệnh mạn tính', en:'People with chronic illness'},
+    {vi:'Người có H', en:'People living with HIV'},
+    {vi:'Cộng đồng LGBTQ+', en:'LGBTQ+ community'},
+    {vi:'Nạn nhân buôn bán người', en:'Human trafficking survivors'},
+    {vi:'Nạn nhân của bạo lực', en:'Survivors of violence'},
+  ]},
+      { key:'done', type:'done' },
   ];
