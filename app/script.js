@@ -130,8 +130,8 @@ const body = document.body;
     body.setAttribute('data-lang', lang);
     viBtn.classList.toggle('active', lang === 'vi');
     enBtn.classList.toggle('active', lang === 'en');
-    if(!pageHome.classList.contains('hidden')) typeHeroTitle(lang);
-    if(!pageDirectory.classList.contains('hidden')) refreshDirectoryUI();
+    if(pageHome && !pageHome.classList.contains('hidden')) typeHeroTitle(lang);
+    if(pageDirectory && !pageDirectory.classList.contains('hidden')) refreshDirectoryUI();
   }
   viBtn.addEventListener('click', () => setLang('vi'));
   enBtn.addEventListener('click', () => setLang('en'));
@@ -203,6 +203,7 @@ function showPage(page) {
   pageHelp.classList.toggle('hidden', page !== 'help');
   pagePractice.classList.toggle('hidden', page !== 'practice');
   pageDirectory.classList.toggle('hidden', page !== 'directory');
+  pageResults.classList.toggle('hidden', page !== 'results');   
   navHome.classList.remove('active');
   navAbout.classList.remove('active');
   navHelp.classList.remove('active');
@@ -266,6 +267,7 @@ function showPage(page) {
   }
   function closeWizard(){ overlay.classList.remove('open'); }
     function goToResults(){
+    closeWizard();                      
     let location;
 
     if(answers.q4geo && !answers.q4geoDenied){
@@ -281,12 +283,15 @@ function showPage(page) {
       };
     }
 
-    sessionStorage.setItem('mappingWizardResult', JSON.stringify({
+        sessionStorage.setItem('mappingWizardResult', JSON.stringify({
       answers,
       location,
     }));
 
-    window.location.href = '../result/results.html';
+    showPage('results');                
+    if (window.PsyMapResults && typeof window.PsyMapResults.init === 'function') {
+      window.PsyMapResults.init();
+    }
   }
 
   document.getElementById('startBtn').addEventListener('click', openWizard);
@@ -349,13 +354,27 @@ function showPage(page) {
       if(step.key === 'q4perm' && geoPending){
         html += `<div class="wizard-hint" style="color:var(--teal)">${t({vi:'Đang chờ bạn cấp quyền truy cập vị trí trên trình duyệt…', en:'Waiting for you to grant location access in your browser…'})}</div>`;
       }
+      if(step.key === 'q4perm' && answers.q4permLocked){
+        if(answers.q4geoDenied){
+          html += `<div class="wizard-hint" style="color:var(--coral)">${t({
+            vi: 'Trình duyệt của bạn không cấp quyền truy cập vị trí, hệ thống đã tự chuyển câu trả lời sang "Không đồng ý". Vui lòng chọn khu vực của bạn ở bước tiếp theo.',
+            en: 'Your browser did not grant location access, so we automatically switched your answer to "Disagree". Please select your area in the next step.'
+          })}</div>`;
+        } else {
+          html += `<div class="wizard-hint" style="color:var(--teal)">${t({
+            vi: 'Bạn đã cấp quyền truy cập vị trí. Đáp án "Đồng ý" đã được khoá lại.',
+            en: 'You have granted location access. Your "Agree" answer is now locked.'
+          })}</div>`;
+        }
+      }
 
       if(step.type === 'single' || step.type === 'multi'){
         const selected = answers[step.key];
-        html += `<div class="option-list ${step.grid ? 'grid' : ''}">`;
+        const locked = step.key === 'q4perm' && answers.q4permLocked;
+        html += `<div class="option-list ${step.grid ? 'grid' : ''} ${locked ? 'locked' : ''}">`;
         step.options.forEach((opt, i) => {
           const isSel = step.type === 'single' ? selected === i : Array.isArray(selected) && selected.includes(i);
-          html += `<button type="button" class="option-card ${isSel ? 'selected' : ''}" data-opt="${i}">
+          html += `<button type="button" class="option-card ${isSel ? 'selected' : ''}" data-opt="${i}" ${locked ? 'disabled' : ''}>
             <span class="option-check"></span><span>${t(opt)}</span></button>`;
         });
         html += `</div>`;
@@ -445,9 +464,11 @@ function showPage(page) {
       return;
     }
 
-    if(step.type === 'single'){
+        if(step.type === 'single'){
       wizardBody.querySelectorAll('.option-card').forEach(btn => {
         btn.addEventListener('click', () => {
+          if(step.key === 'q4perm' && answers.q4permLocked) return;
+
           const optIndex = parseInt(btn.dataset.opt);
           answers[step.key] = optIndex;
           if(step.key === 'q4perm' && optIndex === 0){
@@ -456,6 +477,12 @@ function showPage(page) {
             render();
             requestGeolocation(() => {
               geoPending = false;
+              if(answers.q4geoDenied){
+                answers.q4perm = 1;
+              } else {
+                answers.q4perm = 0;
+              }
+              answers.q4permLocked = true;
               render();
             });
             return;
@@ -464,7 +491,7 @@ function showPage(page) {
         });
       });
     }
-    
+
     if(step.type === 'multi'){
       wizardBody.querySelectorAll('.option-card').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -864,18 +891,17 @@ listEl.innerHTML = `
     });
   });
 
-  const faqSection = document.getElementById('faqSection');
-  if (faqSection) {
-    const faqObserver = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            faqSection.classList.add('in-view');
-            observer.unobserve(faqSection);
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
-    faqObserver.observe(faqSection);
-  }
+document.querySelectorAll('.reveal-on-scroll').forEach(section => {
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          obs.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
+  observer.observe(section);
+});
