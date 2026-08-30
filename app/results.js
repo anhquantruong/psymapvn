@@ -18,6 +18,27 @@
     return match ? PROVINCE_FALLBACK_CENTERS[match] : FALLBACK_CENTER;
   }
 
+  function matchesKnownProvince(name) {
+    const key = (name || '').toLowerCase();
+    return Object.keys(PROVINCE_FALLBACK_CENTERS).some(
+      k => key.includes(k.toLowerCase()) || k.toLowerCase().includes(key)
+    );
+  }
+
+  function guessProvinceByPoint(point) {
+    if (!point) return null;
+    let best = null;
+    let bestDist = Infinity;
+    for (const [name, center] of Object.entries(PROVINCE_FALLBACK_CENTERS)) {
+      const d = haversineKm(point, { latitude: center.lat, longitude: center.lng });
+      if (d != null && d < bestDist) {
+        bestDist = d;
+        best = name;
+      }
+    }
+    return best;
+  }
+
   const REQUIRED_STRING_FIELDS = [
     'phone',
     'website',
@@ -89,14 +110,7 @@
   const TREATMENT_OPTIONS = [
     { key: '', vi: 'Không quan trọng', en: "Doesn't matter" },
     { key: 'psychiatrist', vi: 'Sử dụng thuốc', en: 'With medication' },
-    { key: 'psychologist', vi: 'Không sử dụng thuốc', en: 'Without medication' },
-  ];
-
-  const TYPE_OPTIONS = [
-    { key: '', vi: 'Tất cả loại hình', en: 'All types' },
-    { key: 'public', vi: 'Công lập', en: 'Public' },
-    { key: 'private', vi: 'Tư nhân', en: 'Private' },
-    { key: 'community', vi: 'Tổ chức cộng đồng', en: 'Community org.' },
+    { key: 'psychologist', vi: 'Tâm lý trị liệu (Không sử dụng thuốc)', en: 'Clinical psychology (without medication' },
   ];
 
   const state = {
@@ -226,20 +240,24 @@
       return;
     }
     if (!state.refPoint) return;
+
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${state.refPoint.lat}&lon=${state.refPoint.lng}&accept-language=vi`
+        `/api/reverse-geocode?lat=${state.refPoint.lat}&lng=${state.refPoint.lng}`
       );
       if (!res.ok) {
-        console.warn(`Reverse geocode trả về lỗi HTTP ${res.status}`);
-        return;
+        throw new Error('HTTP ' + res.status);
       }
       const data = await res.json();
       const addr = data.address || {};
       state.userWard = addr.suburb || addr.quarter || addr.city_district || addr.town || addr.village || null;
       state.userProvince = addr.city || addr.state || null;
     } catch (e) {
-      console.warn('Reverse geocode thất bại — sẽ dùng bán kính gần thay thế:', e);
+      console.warn('Reverse geocode thất bại — sẽ suy ra tỉnh/thành theo khoảng cách gần nhất:', e);
+    }
+
+    if (!state.userProvince || !matchesKnownProvince(state.userProvince)) {
+      state.userProvince = guessProvinceByPoint(state.refPoint);
     }
   }
 
@@ -304,7 +322,7 @@
   }
 
   function ageMatches(clinic, age) {
-    if (age == null || Number.isNaN(age)) return null; // không có tuổi -> trung lập
+    if (age == null || Number.isNaN(age)) return null;
     const min = clinic.min_age != null && clinic.min_age !== '' ? Number(clinic.min_age) : null;
     const max = clinic.max_age != null && clinic.max_age !== '' ? Number(clinic.max_age) : null;
     if (min != null && age < min) return false;
@@ -423,7 +441,9 @@
       return { clinic: c, distanceKm: d, ...e };
     });
 
-    const geoFiltered = evaluated.filter((m) => {
+    const ageFiltered = evaluated.filter((m) => m.ageOk !== false);
+
+    const geoFiltered = ageFiltered.filter((m) => {
       switch (state.filters.geo) {
         case 'nearest':
           return m.distanceKm == null || m.distanceKm <= NEAREST_RADIUS_KM;
@@ -435,7 +455,7 @@
             const prov = (m.clinic.prov || '');
             return prov.includes(state.userProvince) || state.userProvince.includes(prov);
           }
-          return true;
+          return m.distanceKm == null || m.distanceKm <= NEAREST_RADIUS_KM;
         case 'any':
         default:
           return true;
@@ -458,7 +478,9 @@
       : serviceFiltered;
 
     const typeFiltered = state.filters.type
-      ? treatmentFiltered.filter((m) => normType(m.clinic.clinic_type) === state.filters.type)
+      ? treatmentFiltered.filter(
+          (m) => (m.clinic.clinic_type || '').trim() === state.filters.type
+        )
       : treatmentFiltered;
 
     typeFiltered.sort((a, b) => {
@@ -763,9 +785,20 @@
     const sel = $('typeFilterSelect');
     if (!sel) return;
     const vi = state.lang === 'vi';
-    sel.innerHTML = TYPE_OPTIONS.map(
-      (o) => `<option value="${o.key}" ${o.key === state.filters.type ? 'selected' : ''}>${vi ? o.vi : o.en}</option>`
-    ).join('');
+
+    const types = [...new Set(
+      state.clinics.map((c) => (c.clinic_type || '').trim()).filter(Boolean)
+    )].sort();
+
+    if (state.filters.type && !types.includes(state.filters.type)) {
+      state.filters.type = '';
+    }
+
+    sel.innerHTML =
+      `<option value="">${vi ? 'Tất cả loại hình' : 'All types'}</option>` +
+      types.map(
+        (t) => `<option value="${t.replace(/"/g, '&quot;')}" ${t === state.filters.type ? 'selected' : ''}>${t}</option>`
+      ).join('');
   }
 
   function updateServiceFilterBtnLabel() {
@@ -914,6 +947,8 @@
     const [refPoint, clinics] = await Promise.all([getReferencePoint(), loadClinics()]);
     state.refPoint = refPoint;
     state.clinics = clinics;
+
+    renderTypeOptions();
 
     await resolveUserLocationLabels();
 

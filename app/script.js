@@ -362,8 +362,8 @@ function showPage(page) {
           })}</div>`;
         } else {
           html += `<div class="wizard-hint" style="color:var(--teal)">${t({
-            vi: 'Bạn đã cấp quyền truy cập vị trí. Đáp án "Đồng ý" đã được khoá lại.',
-            en: 'You have granted location access. Your "Agree" answer is now locked.'
+            vi: 'Bạn đã cấp quyền truy cập vị trí. Hãy tiếp tục sang câu hỏi sàng lọc tiếp theo.',
+            en: 'You have granted location access. Please continue.'
           })}</div>`;
         }
       }
@@ -388,7 +388,6 @@ function showPage(page) {
         html += `<input class="text-input" id="textField" type="${inputType}" value="${String(val).replace(/"/g,'&quot;')}" placeholder="${placeholderText}"${extraAttrs}>`;
       }    
       if(step.type === 'cascade'){
-        html += `<div class="sample-note">${t({vi:'(Phạm vi hiện tại: TP. Hồ Chí Minh và TP. Đồng Nai sau sáp nhập 01/07/2025)'})}</div>`;
 
         if(locationsState.status !== 'ready'){
           if(locationsState.status === 'idle') ensureLocationsLoaded(render);
@@ -905,3 +904,28 @@ document.querySelectorAll('.reveal-on-scroll').forEach(section => {
   );
   observer.observe(section);
 });
+
+const emergencyFabBtn = document.getElementById('emergencyFabBtn');
+const emergencyPanel = document.getElementById('emergencyPanel');
+
+if (emergencyFabBtn && emergencyPanel) {
+  emergencyFabBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = emergencyPanel.classList.toggle('open');
+    emergencyFabBtn.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!emergencyPanel.contains(e.target) && !emergencyFabBtn.contains(e.target)) {
+      emergencyPanel.classList.remove('open');
+      emergencyFabBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      emergencyPanel.classList.remove('open');
+      emergencyFabBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+}

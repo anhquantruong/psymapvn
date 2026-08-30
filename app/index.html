@@ -665,7 +665,7 @@
                     </ul>
                   </div>
                 </div>
-                            </div>
+              </div>
             </div>
           </div>
 
@@ -800,9 +800,7 @@
               </div>
             </div>
           </div>
-
-                </div>
-
+        </div>
         <p class="faq-source">
           <span lang-el="vi">Nguồn: Sở Y tế TP. Hồ Chí Minh</span>
           <span lang-el="en">Source: Ho Chi Minh City Department of Health</span>
@@ -1587,18 +1585,6 @@
       <div class="team-grid">
 
         <div class="team-card">
-          <div class="team-photo" style="background-image:url('https://via.placeholder.com/400x400')"></div>
-          <div class="team-name">
-            <span lang-el="vi">NCS. TS. Diệp Lê Tuấn</span>
-            <span lang-el="en">Ph.D. Candidate Tuan, Diep Le</span>
-          </div>
-          <div class="team-desc">
-            <span lang-el="vi">Bác sĩ CK tại Bệnh viện Tâm Thần TP. HCM</span>
-            <span lang-el="en"></span>
-          </div>
-        </div>
-
-        <div class="team-card">
           <div class="team-photo" style="background-image:url('https://cdn.phototourl.com/free/2026-08-08-b33903c2-d028-42c0-b16a-e2a25de42c08.jpg')"></div>
           <div class="team-name">
             <span lang-el="vi">Trương Anh Quân </span>
@@ -1685,7 +1671,7 @@
     </label>
     <select id="geoFilterSelect" class="select-input"></select>
   </div>
- 
+
   <div class="rp-trail-field" style="position:relative;">
     <label>
       <i class="fa-solid fa-list-check" aria-hidden="true"></i>
@@ -1700,16 +1686,25 @@
         overflow-y:auto; box-shadow:0 8px 24px rgba(0,0,0,.12);">
     </div>
   </div>
- 
+
   <div class="rp-trail-field">
     <label for="treatmentFilterSelect">
       <i class="fa-solid fa-pills" aria-hidden="true"></i>
-      <span lang-el="vi">Hình thức khám</span>
-      <span lang-el="en">Treatment format</span>
+      <span lang-el="vi">Hình thức hỗ trợ</span>
+      <span lang-el="en">Treatment options</span>
     </label>
     <select id="treatmentFilterSelect" class="select-input"></select>
   </div>
- 
+
+  <div class="rp-trail-field">
+    <label for="typeFilterSelect">
+      <i class="fa-solid fa-hospital" aria-hidden="true"></i>
+      <span lang-el="vi">Loại hình cơ sở khám</span>
+      <span lang-el="en">Facility type</span>
+    </label>
+    <select id="typeFilterSelect" class="select-input"></select>
+  </div>
+
   <div class="rp-trail-count" id="resultsCount"></div>
 </div>
 
@@ -2015,6 +2010,70 @@
           <span lang-el="vi">Tiếp theo</span><span lang-el="en">Next</span>
         </button>
       </div>
+    </div>
+  </div>
+    <div class="emergency-fab" id="emergencyFab">
+    <button class="emergency-fab-btn" id="emergencyFabBtn" type="button" aria-expanded="false" aria-controls="emergencyPanel">
+      <i class="fa-solid fa-phone-volume" aria-hidden="true"></i>
+      <span lang-el="vi">Cấp cứu</span>
+      <span lang-el="en">Emergency</span>
+    </button>
+    <div class="emergency-panel" id="emergencyPanel">
+      <div class="emergency-panel-head">
+        <span lang-el="vi">Số điện thoại khẩn cấp</span>
+        <span lang-el="en">Emergency numbers</span>
+      </div>
+      <ul class="emergency-list">
+        <li>
+          <a href="tel:115">
+            <span class="emergency-num">115</span>
+            <span class="emergency-desc">
+              <span lang-el="vi">Cấp cứu y tế — toàn quốc, 24/7</span>
+              <span lang-el="en">Medical emergency — nationwide, 24/7</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="tel:111">
+            <span class="emergency-num">111</span>
+            <span class="emergency-desc">
+              <span lang-el="vi">Bảo vệ trẻ em — tư vấn miễn phí 24/7</span>
+              <span lang-el="en">Child protection — free 24/7 counseling</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="tel:19001267">
+            <span class="emergency-num">1900 1267</span>
+            <span class="emergency-desc">
+              <span lang-el="vi">Cấp cứu trầm cảm — TP. HCM</span>
+              <span lang-el="en">Mental health emergency htok — HCMC</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="tel:1900 636446">
+            <span class="emergency-num">1900 636446</span>
+            <span class="emergency-desc">
+              <span lang-el="vi">Tổng đài Hỗ trợ Tâm lý - Xã hội khẩn cấp — toàn quốc, 24/7</span>
+              <span lang-el="en">Psychological-Social First Aid (PSFA) — nationwide, 24/7</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="tel:1900 9095">
+            <span class="emergency-num">1900 9095</span>
+            <span class="emergency-desc">
+              <span lang-el="vi">Tư vấn khám chữ bệnh (Bộ Y tế) — toàn quốc, 24/7</span>
+              <span lang-el="en">National Health Hotline (Ministry of Health - nationwide), 24/7</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+      <p class="emergency-note">
+        <span lang-el="vi">Nếu bạn hoặc ai đó đang gặp nguy hiểm ngay lúc này, hãy gọi ngay — đừng chờ đợi.</span>
+        <span lang-el="en">If you or someone else is in immediate danger, call now — don't wait.</span>
+      </p>
     </div>
   </div>
 <script src="questions.js"></script>

@@ -37,24 +37,14 @@ app.use(
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
-      maxAge: 1000 * 60 * 60 * 8 // hết hạn sau 8 giờ
+      maxAge: 1000 * 60 * 60 * 8
     }
   })
 );
 
 
-// =========================================================
-// DATABASE
-// =========================================================
-//
-// pg dùng connection pool thay vì mở 1 file .db như SQLite.
-// Nếu deploy lên host yêu cầu SSL (Supabase, Render, Railway...)
-// thường cần bật ssl bên dưới — bỏ comment nếu gặp lỗi kết nối.
-// =========================================================
-
 const pool = new Pool({
   connectionString: DATABASE_URL,
-  // ssl: { rejectUnauthorized: false }
 });
 
 pool
@@ -75,18 +65,6 @@ pool
   });
 
 
-// =========================================================
-// CREATE FEEDBACK TABLE IF NEEDED
-// =========================================================
-//
-// Same structure as before, viết lại theo cú pháp Postgres:
-// - SERIAL thay AUTOINCREMENT
-// - TIMESTAMPTZ thay TEXT cho created_at/replied_at
-// - is_read dùng BOOLEAN thay vì INTEGER 0/1 (tự nhiên hơn ở
-//   Postgres — frontend admin.js đang check `Number(x) === 1`,
-//   nên cần sửa nhẹ phía frontend, xem ghi chú cuối file)
-// =========================================================
-
 async function ensureFeedbackTable() {
 
   await pool.query(`
@@ -105,9 +83,6 @@ async function ensureFeedbackTable() {
     )
   `);
 
-
-  // ADD COLUMN IF NOT EXISTS thay cho việc tự kiểm tra
-  // PRAGMA table_info như bên SQLite — Postgres hỗ trợ thẳng.
 
   await pool.query(`
     ALTER TABLE feedback
@@ -135,14 +110,9 @@ ensureFeedbackTable().catch(error => {
 });
 
 
-// =========================================================
-// AUTH — LOGIN BRUTE-FORCE GUARD (per IP, in-memory)
-// (Không cần đổi — vẫn giữ in-memory, không liên quan DB)
-// =========================================================
-
 const loginAttempts = new Map();
 const MAX_ATTEMPTS = 5;
-const LOCKOUT_MS = 15 * 60 * 1000; // 15 phút
+const LOCKOUT_MS = 15 * 60 * 1000;
 
 
 function isLockedOut(ip) {
@@ -186,10 +156,6 @@ function clearAttempts(ip) {
 }
 
 
-// =========================================================
-// AUTH — MIDDLEWARE
-// =========================================================
-
 function requireAuth(req, res, next) {
 
   if (req.session && req.session.isAdmin) {
@@ -204,10 +170,6 @@ function requireAuth(req, res, next) {
 
 }
 
-
-// =========================================================
-// AUTH — ROUTES
-// =========================================================
 
 app.post(
   "/api/admin/login",
@@ -331,10 +293,6 @@ app.get(
 );
 
 
-// =========================================================
-// AUTH — PROTECT ADMIN DASHBOARD (static HTML/JS/CSS)
-// =========================================================
-
 const OPEN_ADMIN_PATHS = [
   "/login.html",
   "/login.css",
@@ -362,26 +320,13 @@ app.use("/admin", (req, res, next) => {
 });
 
 
-// =========================================================
-// AUTH — PROTECT ADMIN API
-// =========================================================
-
 app.use("/api/admin", requireAuth);
 
-
-// =========================================================
-// SERVE WEBSITE
-// =========================================================
 
 app.use(
   express.static(__dirname)
 );
 
-
-// =========================================================
-// HELPER — VALIDATE CLINIC
-// (Không đổi — validation logic không liên quan tới DB)
-// =========================================================
 
 function validateClinic(data) {
 
@@ -488,10 +433,6 @@ function validateClinic(data) {
 }
 
 
-// =========================================================
-// GET ALL CLINICS
-// =========================================================
-
 app.get(
   "/api/admin/clinics",
   async (req, res) => {
@@ -522,10 +463,6 @@ app.get(
   }
 );
 
-
-// =========================================================
-// GET ONE CLINIC
-// =========================================================
 
 app.get(
   "/api/admin/clinics/:id",
@@ -581,10 +518,6 @@ app.get(
 );
 
 
-// =========================================================
-// ADD CLINIC
-// =========================================================
-
 app.post(
   "/api/admin/clinics",
   async (req, res) => {
@@ -623,8 +556,6 @@ app.post(
           : Number(data.longitude);
 
 
-      // $1..$18 thay cho @clinic_name kiểu SQLite. Thứ tự
-      // trong mảng values PHẢI khớp đúng thứ tự $ trong câu SQL.
       const result = await pool.query(
         `
           INSERT INTO clinics (
@@ -691,10 +622,6 @@ app.post(
   }
 );
 
-
-// =========================================================
-// UPDATE CLINIC
-// =========================================================
 
 app.put(
   "/api/admin/clinics/:id",
@@ -836,10 +763,6 @@ app.put(
 );
 
 
-// =========================================================
-// DELETE CLINIC
-// =========================================================
-
 app.delete(
   "/api/admin/clinics/:id",
   async (req, res) => {
@@ -858,7 +781,6 @@ app.delete(
       }
 
 
-      // result.changes (SQLite) -> result.rowCount (pg)
       const result = await pool.query(
         `DELETE FROM clinics WHERE id = $1`,
         [id]
@@ -893,10 +815,6 @@ app.delete(
   }
 );
 
-
-// =========================================================
-// SUBMIT USER FEEDBACK
-// =========================================================
 
 app.post(
   "/api/feedback",
@@ -989,10 +907,6 @@ app.post(
 );
 
 
-// =========================================================
-// GET ALL FEEDBACK — ADMIN
-// =========================================================
-
 app.get(
   "/api/admin/feedback",
   async (req, res) => {
@@ -1025,10 +939,6 @@ app.get(
   }
 );
 
-
-// =========================================================
-// GET ONE FEEDBACK — ADMIN
-// =========================================================
 
 app.get(
   "/api/admin/feedback/:id",
@@ -1089,10 +999,6 @@ app.get(
   }
 );
 
-
-// =========================================================
-// MARK FEEDBACK AS READ — ADMIN
-// =========================================================
 
 app.post(
   "/api/admin/feedback/:id/read",
@@ -1243,10 +1149,6 @@ app.post(
 );
 
 
-// =========================================================
-// UPDATE FEEDBACK STATUS — ADMIN
-// =========================================================
-
 app.patch(
   "/api/admin/feedback/:id",
   async (req, res) => {
@@ -1325,10 +1227,6 @@ app.patch(
   }
 );
 
-
-// =========================================================
-// DELETE FEEDBACK — ADMIN
-// =========================================================
 
 app.delete(
   "/api/admin/feedback/:id",
@@ -1454,9 +1352,80 @@ app.get(
   }
 );
 
-// =========================================================
-// PUBLIC — GET ALL CLINICS
-// =========================================================
+app.get(
+  "/api/reverse-geocode",
+  async (req, res) => {
+
+    try {
+
+      const { lat, lng } = req.query;
+
+      if (lat === undefined || lng === undefined || lat === "" || lng === "") {
+
+        return res.status(400).json({
+          error: "Missing lat/lng."
+        });
+
+      }
+
+      const latitude = Number(lat);
+      const longitude = Number(lng);
+
+      if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+
+        return res.status(400).json({
+          error: "Invalid lat/lng."
+        });
+
+      }
+
+      const url = new URL(
+        "https://nominatim.openstreetmap.org/reverse"
+      );
+
+      url.searchParams.set("format", "jsonv2");
+      url.searchParams.set("lat", String(latitude));
+      url.searchParams.set("lon", String(longitude));
+      url.searchParams.set("accept-language", "vi");
+
+      const response = await fetch(url, {
+        headers: {
+          "User-Agent": "PsyMapVN/1.0 (psymapvn@gmail.com)",
+          "Accept-Language": "vi"
+        }
+      });
+
+      if (!response.ok) {
+
+        console.error(
+          `Nominatim reverse returned HTTP ${response.status}`
+        );
+
+        return res.status(response.status).json({
+          error: `Nominatim HTTP ${response.status}`
+        });
+
+      }
+
+      const data = await response.json();
+
+      return res.json(data);
+
+    } catch (error) {
+
+      console.error(
+        "Nominatim reverse geocoding error:",
+        error
+      );
+
+      return res.status(500).json({
+        error: "Reverse geocoding failed."
+      });
+
+    }
+
+  }
+);
 
 app.get(
   "/api/clinics",
@@ -1499,4 +1468,3 @@ app.listen(
 
   }
 );
-
